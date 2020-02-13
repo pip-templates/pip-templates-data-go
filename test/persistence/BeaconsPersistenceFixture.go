@@ -1,277 +1,171 @@
-let _ = require('lodash');
-let async = require('async');
-let assert = require('chai').assert;
+package test_persistence
 
-import { FilterParams } from 'pip-services3-commons-node';
-import { PagingParams } from 'pip-services3-commons-node';
+import (
+	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
-import { BeaconV1 } from '../../src/data/version1/BeaconV1';
-import { BeaconTypeV1 } from '../../src/data/version1/BeaconTypeV1';
-import { IBeaconsPersistence } from '../../src/persistence/IBeaconsPersistence';
+type BeaconsPersistenceFixture struct {
+	Beacon1     bdata.BeaconV1
+	Beacon2     bdata.BeaconV1
+	Beacon3     bdata.BeaconV1
+	persistence bpersist.IBeaconsPersistence
+}
 
-const BEACON1: BeaconV1 = {
-    id: '1',
-    udi: '00001',
-    type: BeaconTypeV1.AltBeacon,
-    site_id: '1',
-    label: 'TestBeacon1',
-    center: { type: 'Point', coordinates: [ 0, 0 ] },
-    radius: 50
-};
-const BEACON2: BeaconV1 = {
-    id: '2',
-    udi: '00002',
-    type: BeaconTypeV1.iBeacon,
-    site_id: '1',
-    label: 'TestBeacon2',
-    center: { type: 'Point', coordinates: [ 2, 2 ] },
-    radius: 70
-};
-const BEACON3: BeaconV1 = {
-    id: '3',
-    udi: '00003',
-    type: BeaconTypeV1.AltBeacon,
-    site_id: '2',
-    label: 'TestBeacon3',
-    center: { type: 'Point', coordinates: [ 10, 10 ] },
-    radius: 50
-};
+func NewBeaconsPersistenceFixture(persistence bpersist.IBeaconsPersistence) *BeaconsPersistenceFixture {
+	//assert.NotNil(persistence)
+	bpf := BeaconsPersistenceFixture{}
+	bpf.Beacon1 = bdata.BeaconV1{
+		Id:      "1",
+		Udi:     "00001",
+		Type:    bdata.BeaconTypeV1.AltBeacon,
+		Site_id: "1",
+		Label:   "TestBeacon1",
+		Center:  bdata.GeoPointV1{Type: "Point", Lat: 0, Lng: 0},
+		Radius:  50,
+	}
+	bpf.Beacon2 = bdata.BeaconV1{
+		Id:      "2",
+		Udi:     "00002",
+		Type:    bdata.BeaconTypeV1.IBeacon,
+		Site_id: "1",
+		Label:   "TestBeacon2",
+		Center:  bdata.GeoPointV1{Type: "Point", Lat: 2, Lng: 2},
+		Radius:  70,
+	}
+	bpf.Beacon3 = bdata.BeaconV1{
+		Id:      "3",
+		Udi:     "00003",
+		Type:    bdata.BeaconTypeV1.AltBeacon,
+		Site_id: "2",
+		Label:   "TestBeacon3",
+		Center:  bdata.GeoPointV1{Type: "Point", Lat: 10, Lng: 10},
+		Radius:  50,
+	}
+	bpf.persistence = persistence
+	return &bpf
 
-export class BeaconsPersistenceFixture {
-    private _persistence: IBeaconsPersistence;
+}
 
-    public constructor(persistence: IBeaconsPersistence) {
-        assert.isNotNull(persistence);
-        this._persistence = persistence;
-    }
+func (c *BeaconsPersistenceFixture) testCreateBeacons(t *testing.T) {
 
-    private testCreateBeacons(done) {
-        async.series([
-            // Create the first beacon
-            (callback) => {
-                this._persistence.create(
-                    null,
-                    BEACON1,
-                    (err, beacon) => {
-                        assert.isNull(err);
+	// Create the first beacon
+	beacon, err := c.persistence.Create("", c.Beacon1)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, c.Beacon1.Udi, beacon.Udi)
+	assert.Equal(t, c.Beacon1.Site_id, beacon.Site_id)
+	assert.Equal(t, c.Beacon1.Type, beacon.Type)
+	assert.Equal(t, c.Beacon1.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-                        assert.isObject(beacon);
-                        assert.equal(BEACON1.udi, beacon.udi);
-                        assert.equal(BEACON1.site_id, beacon.site_id);
-                        assert.equal(BEACON1.type, beacon.type);
-                        assert.equal(BEACON1.label, beacon.label);
-                        assert.isNotNull(beacon.center);
+	// Create the second beacon
+	beacon, err = c.persistence.Create("", c.Beacon2)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, c.Beacon2.Udi, beacon.Udi)
+	assert.Equal(t, c.Beacon2.Site_id, beacon.Site_id)
+	assert.Equal(t, c.Beacon2.Type, beacon.Type)
+	assert.Equal(t, c.Beacon2.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-                        callback();
-                    }
-                );
-            },
-            // Create the second beacon
-            (callback) => {
-                this._persistence.create(
-                    null,
-                    BEACON2,
-                    (err, beacon) => {
-                        assert.isNull(err);
+	// Create the third beacon
+	beacon, err = c.persistence.Create("", c.Beacon3)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, c.Beacon3.Udi, beacon.Udi)
+	assert.Equal(t, c.Beacon3.Site_id, beacon.Site_id)
+	assert.Equal(t, c.Beacon3.Type, beacon.Type)
+	assert.Equal(t, c.Beacon3.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
+}
 
-                        assert.isObject(beacon);
-                        assert.equal(BEACON2.udi, beacon.udi);
-                        assert.equal(BEACON2.site_id, beacon.site_id);
-                        assert.equal(BEACON2.type, beacon.type);
-                        assert.equal(BEACON2.label, beacon.label);
-                        assert.isNotNull(beacon.center);
+func (c *BeaconsPersistenceFixture) TestCrudOperations(t *testing.T) {
+	var beacon1 bdata.BeaconV1
 
-                        callback();
-                    }
-                );
-            },
-            // Create the third beacon
-            (callback) => {
-                this._persistence.create(
-                    null,
-                    BEACON3,
-                    (err, beacon) => {
-                        assert.isNull(err);
+	// Create items
+	c.testCreateBeacons(t)
 
-                        assert.isObject(beacon);
-                        assert.equal(BEACON3.udi, beacon.udi);
-                        assert.equal(BEACON3.site_id, beacon.site_id);
-                        assert.equal(BEACON3.type, beacon.type);
-                        assert.equal(BEACON3.label, beacon.label);
-                        assert.isNotNull(beacon.center);
+	// Get all beacons
+	page, err := c.persistence.GetPageByFilter("", cdata.NewEmptyFilterParams(), cdata.NewEmptyPagingParams())
+	assert.Nil(t, err)
+	assert.NotNil(t, page)
+	assert.Len(t, page.Data, 3)
+	beacon1 = *page.Data[0]
 
-                        callback();
-                    }
-                );
-            }
-        ], done);
-    }
+	// Update the beacon
+	beacon1.Label = "ABC"
+	beacon, err := c.persistence.Update("", beacon1)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
+	assert.Equal(t, "ABC", beacon.Label)
 
-    public testCrudOperations(done) {
-        let beacon1: BeaconV1;
+	// Get beacon by udi
+	beacon, err = c.persistence.GetOneByUdi("", beacon1.Udi)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
 
-        async.series([
-            // Create items
-            (callback) => {
-                this.testCreateBeacons(callback);
-            },
-            // Get all beacons
-            (callback) => {
-                this._persistence.getPageByFilter(
-                    null,
-                    new FilterParams(),
-                    new PagingParams(),
-                    (err, page) => {
-                        assert.isNull(err);
+	// Delete the beacon
+	beacon, err = c.persistence.DeleteById("", beacon1.Id)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
 
-                        assert.isObject(page);
-                        assert.lengthOf(page.data, 3);
+	// Try to get deleted beacon
+	beacon, err = c.persistence.GetOneById("", beacon1.Id)
+	assert.Nil(t, err)
+	assert.Nil(t, beacon)
 
-                        beacon1 = page.data[0];
+}
 
-                        callback();
-                    }
-                )
-            },
-            // Update the beacon
-            (callback) => {
-                beacon1.label = 'ABC';
+func (c *BeaconsPersistenceFixture) TestGetWithFilters(t *testing.T) {
 
-                this._persistence.update(
-                    null,
-                    beacon1,
-                    (err, beacon) => {
-                        assert.isNull(err);
+	// Create items
+	c.testCreateBeacons(t)
 
-                        assert.isObject(beacon);
-                        assert.equal(beacon1.id, beacon.id);
-                        assert.equal('ABC', beacon.label);
+	// Filter by id
+	page, err := c.persistence.GetPageByFilter("",
+		cdata.NewFilterParamsFromTuples(
+			"id", "1",
+		),
+		cdata.NewEmptyPagingParams())
+	assert.Nil(t, err)
+	assert.Len(t, page.Data, 1)
 
-                        callback();
-                    }
-                )
-            },
-            // Get beacon by udi
-            (callback) => {
-                this._persistence.getOneByUdi(
-                    null, 
-                    beacon1.udi,
-                    (err, beacon) => {
-                        assert.isNull(err);
+	// Filter by udi
+	page, err = c.persistence.GetPageByFilter(
+		"",
+		cdata.NewFilterParamsFromTuples(
+			"udi", "00002",
+		),
+		cdata.NewEmptyPagingParams())
+	assert.Nil(t, err)
+	assert.Len(t, page.Data, 1)
 
-                        assert.isObject(beacon);
-                        assert.equal(beacon1.id, beacon.id);
+	// Filter by udis
+	page, err = c.persistence.GetPageByFilter(
+		"",
+		cdata.NewFilterParamsFromTuples(
+			"udis", "00001,00003",
+		),
+		cdata.NewEmptyPagingParams())
 
-                        callback();
-                    }
-                )
-            },
-            // Delete the beacon
-            (callback) => {
-                this._persistence.deleteById(
-                    null,
-                    beacon1.id,
-                    (err, beacon) => {
-                        assert.isNull(err);
+	assert.Nil(t, err)
+	assert.Len(t, page.Data, 2)
 
-                        assert.isObject(beacon);
-                        assert.equal(beacon1.id, beacon.id);
+	// Filter by site_id
+	page, err = c.persistence.GetPageByFilter(
+		"",
+		cdata.NewFilterParamsFromTuples(
+			"site_id", "1",
+		),
+		cdata.NewEmptyPagingParams())
 
-                        callback();
-                    }
-                )
-            },
-            // Try to get deleted beacon
-            (callback) => {
-                this._persistence.getOneById(
-                    null,
-                    beacon1.id,
-                    (err, beacon) => {
-                        assert.isNull(err);
-
-                        assert.isNull(beacon || null);
-
-                        callback();
-                    }
-                )
-            }
-        ], done);
-    }
-
-    public testGetWithFilters(done) {
-        async.series([
-            // Create items
-            (callback) => {
-                this.testCreateBeacons(callback);
-            },
-            // Filter by id
-            (callback) => {
-                this._persistence.getPageByFilter(
-                    null,
-                    FilterParams.fromTuples(
-                        'id', '1'
-                    ),
-                    new PagingParams(),
-                    (err, page) => {
-                        assert.isNull(err);
-
-                        assert.lengthOf(page.data, 1);
-
-                        callback();
-                    }
-                )
-            },
-            // Filter by udi
-            (callback) => {
-                this._persistence.getPageByFilter(
-                    null,
-                    FilterParams.fromTuples(
-                        'udi', '00002'
-                    ),
-                    new PagingParams(),
-                    (err, page) => {
-                        assert.isNull(err);
-
-                        assert.lengthOf(page.data, 1);
-
-                        callback();
-                    }
-                )
-            },
-            // Filter by udis
-            (callback) => {
-                this._persistence.getPageByFilter(
-                    null,
-                    FilterParams.fromTuples(
-                        'udis', '00001,00003'
-                    ),
-                    new PagingParams(),
-                    (err, page) => {
-                        assert.isNull(err);
-
-                        assert.lengthOf(page.data, 2);
-
-                        callback();
-                    }
-                )
-            },
-            // Filter by site_id
-            (callback) => {
-                this._persistence.getPageByFilter(
-                    null,
-                    FilterParams.fromTuples(
-                        'site_id', '1'
-                    ),
-                    new PagingParams(),
-                    (err, page) => {
-                        assert.isNull(err);
-
-                        assert.lengthOf(page.data, 2);
-
-                        callback();
-                    }
-                )
-            },
-        ], done);
-    }
+	assert.Nil(t, err)
+	assert.Len(t, page.Data, 2)
 }

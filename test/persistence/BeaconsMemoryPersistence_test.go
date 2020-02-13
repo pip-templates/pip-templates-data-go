@@ -1,31 +1,25 @@
-import { ConfigParams } from 'pip-services3-commons-node';
+package test_persistence
 
-import { BeaconsMemoryPersistence } from '../../src/persistence/BeaconsMemoryPersistence';
-import { BeaconsPersistenceFixture } from './BeaconsPersistenceFixture';
+import (
+	"testing"
 
-suite('BeaconsMemoryPersistence', () => {
-    let persistence: BeaconsMemoryPersistence;
-    let fixture: BeaconsPersistenceFixture;
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+)
 
-    setup((done) => {
-        persistence = new BeaconsMemoryPersistence();
-        persistence.configure(new ConfigParams());
+func TestBeaconsMemoryPersistence(t *testing.T) {
+	var persistence *bpersist.BeaconsMemoryPersistence
+	var fixture *BeaconsPersistenceFixture
 
-        fixture = new BeaconsPersistenceFixture(persistence);
+	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence.Configure(cconf.NewEmptyConfigParams())
+	fixture = NewBeaconsPersistenceFixture(persistence)
 
-        persistence.open(null, done);
-    });
+	persistence.Open("")
 
-    teardown((done) => {
-        persistence.close(null, done);
-    });
+	defer persistence.Close("")
 
-    test('CRUD Operations', (done) => {
-        fixture.testCrudOperations(done);
-    });
-
-    test('Get with Filters', (done) => {
-        fixture.testGetWithFilters(done);
-    });
-
-});
+	t.Run("BeaconsMemoryPersistence:CRUD Operations", fixture.TestCrudOperations)
+	persistence.Clear("")
+	t.Run("BeaconsMemoryPersistence:Get with Filters", fixture.TestGetWithFilters)
+}

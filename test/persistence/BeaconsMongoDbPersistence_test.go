@@ -1,49 +1,58 @@
-let process = require('process');
+package test_persistence
 
-import { ConfigParams } from 'pip-services3-commons-node';
+import (
+	"os"
+	"testing"
 
-import { BeaconsMongoDbPersistence } from '../../src/persistence/BeaconsMongoDbPersistence';
-import { BeaconsPersistenceFixture } from './BeaconsPersistenceFixture';
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+)
 
-suite('BeaconsMongoDbPersistence', () => {
-    let persistence: BeaconsMongoDbPersistence;
-    let fixture: BeaconsPersistenceFixture;
+func TestBeaconsMongoDbPersistence(t *testing.T) {
 
-    let mongoUri = process.env['MONGO_SERVICE_URI'];
-    let mongoHost = process.env['MONGO_SERVICE_HOST'] || 'localhost';
-    let mongoPort = process.env['MONGO_SERVICE_PORT'] || 27017;
-    let mongoDatabase = process.env['MONGO_SERVICE_DB'] || 'test';
+	var persistence *bpersist.BeaconsMongoDbPersistence
+	var fixture *BeaconsPersistenceFixture
 
-    // Exit if mongo connection is not set
-    if (mongoUri == '' && mongoHost == '')
-        return;
+	mongoUri := os.Getenv("MONGO_SERVICE_URI")
+	mongoHost := os.Getenv("MONGO_SERVICE_HOST")
 
-    setup((done) => {
-        persistence = new BeaconsMongoDbPersistence();
-        persistence.configure(ConfigParams.fromTuples(
-            'connection.uri', mongoUri,
-            'connection.host', mongoHost,
-            'connection.port', mongoPort,
-            'connection.database', mongoDatabase
-        ));
+	if mongoHost == "" {
+		mongoHost = "localhost"
+	}
+	mongoPort := os.Getenv("MONGO_SERVICE_PORT")
+	if mongoPort == "" {
+		mongoPort = "27017"
+	}
 
-        fixture = new BeaconsPersistenceFixture(persistence);
+	mongoDatabase := os.Getenv("MONGO_SERVICE_DB")
+	if mongoDatabase == "" {
+		mongoDatabase = "test"
+	}
 
-        persistence.open(null, (err) => {
-            persistence.clear(null, done);
-        });
-    });
+	// Exit if mongo connection is not set
+	if mongoUri == "" && mongoHost == "" {
+		return
+	}
 
-    teardown((done) => {
-        persistence.close(null, done);
-    });
+	persistence = bpersist.NewBeaconsMongoDbPersistence()
+	persistence.Configure(cconf.NewConfigParamsFromTuples(
+		"connection.uri", mongoUri,
+		"connection.host", mongoHost,
+		"connection.port", mongoPort,
+		"connection.database", mongoDatabase,
+	))
 
-    test('CRUD Operations', (done) => {
-        fixture.testCrudOperations(done);
-    });
+	fixture = NewBeaconsPersistenceFixture(persistence)
 
-    test('Get with Filters', (done) => {
-        fixture.testGetWithFilters(done);
-    });
+	opnErr := persistence.Open("")
+	if opnErr == nil {
+		persistence.Clear("")
+	}
 
-});
+	defer persistence.Close("")
+
+	t.Run("BeaconsMongoDbPersistence:CRUD Operations", fixture.TestCrudOperations)
+	persistence.Clear("")
+	t.Run("BeaconsMongoDbPersistence:Get with Filters", fixture.TestGetWithFilters)
+
+}

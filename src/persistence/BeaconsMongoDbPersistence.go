@@ -29,32 +29,37 @@ func (c *BeaconsMongoDbPersistence) composeFilter(filter *cdata.FilterParams) in
 		filter = cdata.NewEmptyFilterParams()
 	}
 
-	criteria := bson.M{}
+	criteria := make([]bson.M, 0, 0)
 
-	id := filter.GetAsNullableString("id")
-	if id != nil {
-		criteria["_id"] = id
-	}
-
-	siteId := filter.GetAsNullableString("site_id")
-	if siteId != nil {
-		criteria["site_id"] = siteId
-	}
-	label := filter.GetAsNullableString("label")
-	if label != nil {
-		criteria["label"] = label
-	}
-	udi := filter.GetAsNullableString("udi")
-	if udi != nil {
-		criteria["udi"] = udi
+	id := filter.GetAsString("id")
+	if id != "" {
+		//criteria["_id"] = id
+		criteria = append(criteria, bson.M{"_id": id})
 	}
 
-	udis := filter.GetAsNullableString("udis")
+	siteId := filter.GetAsString("site_id")
+	if siteId != "" {
+		//criteria["site_id"] = siteId
+		criteria = append(criteria, bson.M{"site_id": siteId})
+	}
+	label := filter.GetAsString("label")
+	if label != "" {
+		//criteria["label"] = label
+		criteria = append(criteria, bson.M{"label": label})
+	}
+	udi := filter.GetAsString("udi")
+	if udi != "" {
+		//criteria["udi"] = udi
+		criteria = append(criteria, bson.M{"udi": udi})
+	}
+
+	udis := filter.GetAsString("udis")
 	var arrUdis []string = make([]string, 0, 0)
-	if udis != nil {
-		arrUdis = strings.Split(*udis, ",")
-		if len(arrUdis) > 0 {
-			criteria["udi"] = bson.D{{"$in", arrUdis}}
+	if udis != "" {
+		arrUdis = strings.Split(udis, ",")
+		if len(arrUdis) > 1 {
+			//criteria["udi"] = bson.D{{"$in", arrUdis}}
+			criteria = append(criteria, bson.M{"udi": bson.D{{"$in", arrUdis}}})
 		}
 	}
 	if len(criteria) > 0 {
@@ -63,7 +68,7 @@ func (c *BeaconsMongoDbPersistence) composeFilter(filter *cdata.FilterParams) in
 	return bson.M{}
 }
 
-func (c *BeaconsMongoDbPersistence) Create(correlationId string, item *bdata.BeaconV1) (result *bdata.BeaconV1, err error) {
+func (c *BeaconsMongoDbPersistence) Create(correlationId string, item bdata.BeaconV1) (result *bdata.BeaconV1, err error) {
 	value, err := c.IdentifiableMongoDbPersistence.Create(correlationId, item)
 
 	if value != nil {
@@ -96,7 +101,7 @@ func (c *BeaconsMongoDbPersistence) GetOneById(correlationId string, id string) 
 	return item, err
 }
 
-func (c *BeaconsMongoDbPersistence) Update(correlationId string, item *bdata.BeaconV1) (result *bdata.BeaconV1, err error) {
+func (c *BeaconsMongoDbPersistence) Update(correlationId string, item bdata.BeaconV1) (result *bdata.BeaconV1, err error) {
 	value, err := c.IdentifiableMongoDbPersistence.Update(correlationId, item)
 	if value != nil {
 		val, _ := value.(*bdata.BeaconV1)
@@ -139,9 +144,9 @@ func (c *BeaconsMongoDbPersistence) GetPageByFilter(correlationId string, filter
 	}
 	// Convert to BeaconV1DataPage
 	dataLen := int64(len(tempPage.Data)) // For full release tempPage and delete this by GC
-	beaconData := make([]bdata.BeaconV1, dataLen)
+	beaconData := make([]*bdata.BeaconV1, dataLen)
 	for i, v := range tempPage.Data {
-		beaconData[i] = v.(bdata.BeaconV1)
+		beaconData[i] = v.(*bdata.BeaconV1)
 	}
 	page = bdata.NewBeaconV1DataPage(&dataLen, beaconData)
 	return page, nil

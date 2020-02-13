@@ -26,15 +26,15 @@ func (c *BeaconsMemoryPersistence) composeFilter(filter *cdata.FilterParams) fun
 		filter = cdata.NewEmptyFilterParams()
 	}
 
-	id := filter.GetAsNullableString("id")
-	siteId := filter.GetAsNullableString("site_id")
-	label := filter.GetAsNullableString("label")
-	udi := filter.GetAsNullableString("udi")
-	udis := filter.GetAsNullableString("udis")
+	id := filter.GetAsString("id")
+	siteId := filter.GetAsString("site_id")
+	label := filter.GetAsString("label")
+	udi := filter.GetAsString("udi")
+	udis := filter.GetAsString("udis")
 
 	var arrUdis []string = make([]string, 0, 0)
-	if udis != nil {
-		arrUdis = strings.Split(*udis, ",")
+	if udis != "" {
+		arrUdis = strings.Split(udis, ",")
 	}
 
 	return func(beacon interface{}) bool {
@@ -42,19 +42,19 @@ func (c *BeaconsMemoryPersistence) composeFilter(filter *cdata.FilterParams) fun
 		if !ok {
 			return false
 		}
-		if id != nil && item.Id != *id {
+		if id != "" && item.Id != id {
 			return false
 		}
-		if siteId != nil && item.Site_id != *siteId {
+		if siteId != "" && item.Site_id != siteId {
 			return false
 		}
-		if label != nil && item.Label != *label {
+		if label != "" && item.Label != label {
 			return false
 		}
-		if udi != nil && item.Udi != *udi {
+		if udi != "" && item.Udi != udi {
 			return false
 		}
-		if len(arrUdis) > 0 && strings.Index(*udis, item.Udi) < 0 {
+		if len(arrUdis) > 0 && strings.Index(udis, item.Udi) < 0 {
 			return false
 		}
 		return true
@@ -136,9 +136,9 @@ func (c *BeaconsMemoryPersistence) GetPageByFilter(correlationId string, filter 
 	}
 	// Convert to BeaconV1DataPage
 	dataLen := int64(len(tempPage.Data)) // For full release tempPage and delete this by GC
-	beaconData := make([]bdata.BeaconV1, dataLen)
+	beaconData := make([]*bdata.BeaconV1, dataLen)
 	for i, v := range tempPage.Data {
-		beaconData[i] = v.(bdata.BeaconV1)
+		beaconData[i] = v.(*bdata.BeaconV1)
 	}
 	page = bdata.NewBeaconV1DataPage(&dataLen, beaconData)
 	return page, nil

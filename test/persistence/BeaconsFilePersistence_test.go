@@ -1,33 +1,28 @@
-import { ConfigParams } from 'pip-services3-commons-node';
+package test_persistence
 
-import { BeaconsFilePersistence } from '../../src/persistence/BeaconsFilePersistence';
-import { BeaconsPersistenceFixture } from './BeaconsPersistenceFixture';
+import (
+	"testing"
 
-suite('BeaconsFilePersistence', () => {
-    let persistence: BeaconsFilePersistence;
-    let fixture: BeaconsPersistenceFixture;
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+)
 
-    setup((done) => {
-        persistence = new BeaconsFilePersistence('data/beacons.test.json');
-        persistence.configure(new ConfigParams());
+func TestBeaconsFilePersistence(t *testing.T) {
+	var persistence *bpersist.BeaconsFilePersistence
+	var fixture *BeaconsPersistenceFixture
 
-        fixture = new BeaconsPersistenceFixture(persistence);
+	persistence = bpersist.NewBeaconsFilePersistence("../../data/beacons.test.json")
+	persistence.Configure(cconf.NewEmptyConfigParams())
+	fixture = NewBeaconsPersistenceFixture(persistence)
 
-        persistence.open(null, (err) => {
-            persistence.clear(null, done);
-        });
-    });
+	opnErr := persistence.Open("")
+	if opnErr == nil {
+		persistence.Clear("")
+	}
 
-    teardown((done) => {
-        persistence.close(null, done);
-    });
+	defer persistence.Close("")
 
-    test('CRUD Operations', (done) => {
-        fixture.testCrudOperations(done);
-    });
-
-    test('Get with Filters', (done) => {
-        fixture.testGetWithFilters(done);
-    });
-
-});
+	t.Run("BeaconsFilePersistence:CRUD Operations", fixture.TestCrudOperations)
+	persistence.Clear("")
+	t.Run("BeaconsFilePersistence:Get with Filters", fixture.TestGetWithFilters)
+}

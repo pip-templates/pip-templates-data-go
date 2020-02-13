@@ -7,7 +7,6 @@ import (
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
 	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
 	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
-	//bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
 )
 
 // implements IBeaconsController, IConfigurable, IReferenceable, ICommandable
@@ -69,7 +68,9 @@ func (c *BeaconsController) CalculatePosition(correlationId string, siteId strin
 	if getErr != nil || page == nil {
 		return nil, getErr
 	}
-	copy(beacons, page.Data)
+	for _, v := range page.Data {
+		beacons = append(beacons, *v)
+	}
 
 	var lat float32 = 0
 	var lng float32 = 0
@@ -87,7 +88,6 @@ func (c *BeaconsController) CalculatePosition(correlationId string, siteId strin
 		position.Type = "Point"
 		position.Lng = lng / (float32)(count)
 		position.Lat = lat / (float32)(count)
-
 	}
 
 	return &pos, nil
