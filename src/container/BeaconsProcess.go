@@ -1,13 +1,26 @@
-import { ProcessContainer } from 'pip-services3-container-node';
-import { DefaultRpcFactory } from 'pip-services3-rpc-node';
+package container
 
-import {BeaconsServiceFactory} from '../build/BeaconsServiceFactory';
+import (
+	cproc "github.com/pip-services3-go/pip-services3-container-go/container"
+	rpcbuild "github.com/pip-services3-go/pip-services3-rpc-go/build"
+	bfactory "github.com/pip-templates/pip-templates-microservice-go/src/build"
+)
 
-export class BeaconsProcess extends ProcessContainer{
-    public constructor(){
-        super('beacons', 'Beacons microservice');
+// import { ProcessContainer } from "pip-services3-container-node";
+// import { DefaultRpcFactory } from "pip-services3-rpc-node";
 
-        this._factories.add(new BeaconsServiceFactory());
-        this._factories.add(new DefaultRpcFactory());
-    }
+// import {BeaconsServiceFactory} from "../build/BeaconsServiceFactory";
+
+type BeaconsProcess struct {
+	cproc.ProcessContainer
+}
+
+func NewBeaconsProcess() *BeaconsProcess {
+
+	// super("beacons", "Beacons microservice");
+	bp := BeaconsProcess{}
+	bp.ProcessContainer = *cproc.NewEmptyProcessContainer()
+	bp.AddFactory(bfactory.NewBeaconsServiceFactory())
+	bp.AddFactory(rpcbuild.NewDefaultRpcFactory())
+	return &bp
 }

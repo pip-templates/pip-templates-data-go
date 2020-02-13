@@ -1,26 +1,37 @@
-import { Factory } from 'pip-services3-components-node';
-import { Descriptor } from 'pip-services3-commons-node';
+package build
 
-import { BeaconsMemoryPersistence } from '../../src/persistence/BeaconsMemoryPersistence';
-import { BeaconsFilePersistence } from '../../src/persistence/BeaconsFilePersistence';
-import { BeaconsMongoDbPersistence } from '../../src/persistence/BeaconsMongoDbPersistence';
-import { BeaconsController } from '../../src/logic/BeaconsController';
-import { BeaconsHttpServiceV1 } from '../../src/services/version1/BeaconsHttpServiceV1';
+import (
+	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
+	cbuild "github.com/pip-services3-go/pip-services3-components-go/build"
+	blogic "github.com/pip-templates/pip-templates-microservice-go/src/logic"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	bservices "github.com/pip-templates/pip-templates-microservice-go/src/services/version1"
+)
 
-export class BeaconsServiceFactory extends Factory{
-    public static MemoryPersistenceDescriptor = new Descriptor('beacons', 'persistence', 'memory', '*', '1.0');
-    public static FilePersistenceDescriptor = new Descriptor('beacons', 'persistence', 'file', '*', '1.0');
-    public static MongoDbPersistenceDescriptor = new Descriptor('beacons', 'persistence', 'mongodb', '*', '1.0');
-    public static ControllerDescriptor = new Descriptor('beacons', 'controller', 'default', '*', '1.0');
-    public static HttpServiceV1Descriptor = new Descriptor('beacons', 'service', 'http', '*', '1.0');
-    
-    constructor(){
-        super();
+type BeaconsServiceFactory struct {
+	cbuild.Factory
+	MemoryPersistenceDescriptor  *cref.Descriptor
+	FilePersistenceDescriptor    *cref.Descriptor
+	MongoDbPersistenceDescriptor *cref.Descriptor
+	ControllerDescriptor         *cref.Descriptor
+	HttpServiceV1Descriptor      *cref.Descriptor
+}
 
-        this.registerAsType(BeaconsServiceFactory.MemoryPersistenceDescriptor, BeaconsMemoryPersistence);
-        this.registerAsType(BeaconsServiceFactory.FilePersistenceDescriptor, BeaconsFilePersistence);
-        this.registerAsType(BeaconsServiceFactory.MongoDbPersistenceDescriptor, BeaconsMongoDbPersistence);
-        this.registerAsType(BeaconsServiceFactory.ControllerDescriptor, BeaconsController);
-        this.registerAsType(BeaconsServiceFactory.HttpServiceV1Descriptor, BeaconsHttpServiceV1);
-    }
+func NewBeaconsServiceFactory() *BeaconsServiceFactory {
+
+	bsf := BeaconsServiceFactory{}
+	bsf.Factory = *cbuild.NewFactory()
+
+	bsf.MemoryPersistenceDescriptor = cref.NewDescriptor("beacons", "persistence", "memory", "*", "1.0")
+	bsf.FilePersistenceDescriptor = cref.NewDescriptor("beacons", "persistence", "file", "*", "1.0")
+	bsf.MongoDbPersistenceDescriptor = cref.NewDescriptor("beacons", "persistence", "mongodb", "*", "1.0")
+	bsf.ControllerDescriptor = cref.NewDescriptor("beacons", "controller", "default", "*", "1.0")
+	bsf.HttpServiceV1Descriptor = cref.NewDescriptor("beacons", "service", "http", "*", "1.0")
+
+	bsf.RegisterType(bsf.MemoryPersistenceDescriptor, bpersist.NewBeaconsMemoryPersistence)
+	bsf.RegisterType(bsf.FilePersistenceDescriptor, bpersist.NewBeaconsFilePersistence)
+	bsf.RegisterType(bsf.MongoDbPersistenceDescriptor, bpersist.NewBeaconsMongoDbPersistence)
+	bsf.RegisterType(bsf.ControllerDescriptor, blogic.NewBeaconsController)
+	bsf.RegisterType(bsf.HttpServiceV1Descriptor, bservices.NewBeaconsHttpServiceV1)
+	return &bsf
 }

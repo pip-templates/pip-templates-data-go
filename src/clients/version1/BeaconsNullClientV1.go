@@ -1,44 +1,41 @@
-import { FilterParams } from 'pip-services3-commons-node';
-import { PagingParams } from 'pip-services3-commons-node';
-import { DataPage } from 'pip-services3-commons-node';
+package clients
 
-import { BeaconV1 } from '../../../src/data/version1/BeaconV1';
-import { IBeaconsClientV1 } from './IBeaconsClientV1';
+import (
+	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+)
 
-export class BeaconsNullClientV1 implements IBeaconsClientV1 {
-    getBeacons(correlationId: string, filter: FilterParams, paging: PagingParams,
-        callback: (err: any, page: DataPage<BeaconV1>) => void): void {
-        callback(null, new DataPage([], 0));
-    }
+type BeaconsNullClientV1 struct {
+}
 
-    public getBeaconById(correlationId: string, beaconId: string,
-        callback: (err: any, beacon: BeaconV1) => void): void {
-        callback(null, null);
-    }
+func NewBeaconsNullClientV1() *BeaconsNullClientV1 {
+	return &BeaconsNullClientV1{}
+}
 
-    public getBeaconByUdi(correlationId: string, udi: string,
-        callback: (err: any, beacon: BeaconV1) => void): void {
-        callback(null, null);
-    }
+func (c *BeaconsNullClientV1) getBeacons(correlationId string, filter *cdata.FilterParams, paging *cdata.PagingParams) (page *bdata.BeaconV1DataPage, err error) {
+	return bdata.NewEmptyBeaconV1DataPage(), nil
+}
 
-    public calculatePosition(correlationId: string, siteId: string, udis: string[], 
-        callback: (err: any, position: any) => void): void {
-        callback(null, null);
-    }
+func (c *BeaconsNullClientV1) getBeaconById(correlationId string, beaconId string) (beacon *bdata.BeaconV1, err error) {
+	return nil, nil
+}
 
-    public createBeacon(correlationId: string, beacon: BeaconV1,
-        callback: (err: any, beacon: BeaconV1) => void): void {
-        callback(null, null);
-    }
+func (c *BeaconsNullClientV1) getBeaconByUdi(correlationId string, udi string) (beacon *bdata.BeaconV1, err error) {
+	return nil, nil
+}
 
-    public updateBeacon(correlationId: string, beacon: BeaconV1,
-        callback: (err: any, beacon: BeaconV1) => void): void {
-        callback(null, null);
-    }
+func (c *BeaconsNullClientV1) calculatePosition(correlationId string, siteId string, udis []string) (position *bdata.GeoPointV1, err error) {
+	return nil, nil
+}
 
-    public deleteBeaconById(correlationId: string, beaconId: string,
-        callback: (err: any, beacon: BeaconV1) => void): void {
-        callback(null, null);
-    }
+func (c *BeaconsNullClientV1) createBeacon(correlationId string, beacon bdata.BeaconV1) (res *bdata.BeaconV1, err error) {
+	return nil, nil
+}
 
+func (c *BeaconsNullClientV1) updateBeacon(correlationId string, beacon bdata.BeaconV1) (res *bdata.BeaconV1, err error) {
+	return nil, nil
+}
+
+func (c *BeaconsNullClientV1) deleteBeaconById(correlationId string, beaconId string) (beacon *bdata.BeaconV1, err error) {
+	return nil, nil
 }

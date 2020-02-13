@@ -1,133 +1,120 @@
-let _ = require('lodash');
-let async = require('async');
+package logic
 
-import { FilterParams } from 'pip-services3-commons-node';
-import { PagingParams } from 'pip-services3-commons-node';
-import { DataPage } from 'pip-services3-commons-node';
-import { ConfigParams } from 'pip-services3-commons-node';
-import { IConfigurable } from 'pip-services3-commons-node';
-import { Descriptor } from 'pip-services3-commons-node';
-import { IReferences } from 'pip-services3-commons-node';
-import { IReferenceable } from 'pip-services3-commons-node';
-import { IdGenerator } from 'pip-services3-commons-node';
-import { CommandSet } from 'pip-services3-commons-node';
-import { ICommandable } from 'pip-services3-commons-node';
+import (
+	ccomand "github.com/pip-services3-go/pip-services3-commons-go/commands"
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	//bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+)
 
-import { BeaconV1 } from '../../src/data/version1/BeaconV1';
-import { IBeaconsPersistence } from '../../src/persistence/IBeaconsPersistence';
-import { IBeaconsController } from './IBeaconsController';
-import { BeaconTypeV1 } from '../../src/data/version1/BeaconTypeV1';
-import { BeaconsCommandSet } from './BeaconsCommandSet';
+// implements IBeaconsController, IConfigurable, IReferenceable, ICommandable
+type BeaconsController struct {
+	persistence bpersist.IBeaconsPersistence
+	commandSet  *BeaconsCommandSet
+}
 
-export class BeaconsController implements IBeaconsController, IConfigurable, IReferenceable, ICommandable {
-    private _persistence: IBeaconsPersistence;
-    private _commandSet: BeaconsCommandSet;
+func NewBeaconsController() *BeaconsController {
+	bc := BeaconsController{}
+	return &bc
+}
 
-    public constructor() { }
+func (c *BeaconsController) Configure(config *cconf.ConfigParams) {
 
-    public configure(config: ConfigParams): void {
+}
 
-    }
+func (c *BeaconsController) SetReferences(references cref.IReferences) {
+	ref, err := references.GetOneRequired(cref.NewDescriptor("beacons", "persistence", "*", "*", "1.0"))
+	if ref != nil && err == nil {
+		c.persistence = ref.(bpersist.IBeaconsPersistence)
+	}
+}
 
-    public setReferences(references: IReferences): void {
-        this._persistence = references.getOneRequired<IBeaconsPersistence>(
-            new Descriptor('beacons', 'persistence', '*', '*', '1.0')
-        );
-    }
+func (c *BeaconsController) getCommandSet() *ccomand.CommandSet {
+	if c.commandSet == nil {
+		c.commandSet = NewBeaconsCommandSet(c)
+	}
+	return &c.commandSet.CommandSet
+}
 
-    public getCommandSet(): CommandSet {
-        if (this._commandSet == null) {
-            this._commandSet = new BeaconsCommandSet(this);
-        }
+func (c *BeaconsController) GetBeacons(correlationId string, filter *cdata.FilterParams, paging *cdata.PagingParams) (page *bdata.BeaconV1DataPage, err error) {
+	return c.persistence.GetPageByFilter(correlationId, filter, paging)
+}
 
-        return this._commandSet;
-    }
+func (c *BeaconsController) GetBeaconById(correlationId string, beaconId string) (page *bdata.BeaconV1, err error) {
+	return c.persistence.GetOneById(correlationId, beaconId)
+}
 
-    public getBeacons(correlationId: string, filter: FilterParams, paging: PagingParams,
-        callback: (err: any, page: DataPage<BeaconV1>) => void): void {
-        this._persistence.getPageByFilter(correlationId, filter, paging, callback);
-    }
+func (c *BeaconsController) GetBeaconByUdi(correlationId string, beaconId string) (page *bdata.BeaconV1, err error) {
+	return c.persistence.GetOneByUdi(correlationId, beaconId)
+}
 
-    public getBeaconById(correlationId: string, beaconId: string,
-        callback: (err: any, page: BeaconV1) => void): void {
-            this._persistence.getOneById(correlationId, beaconId, callback);
-    }
+func (c *BeaconsController) CalculatePosition(correlationId string, siteId string, udis []string) (position *bdata.GeoPointV1, err error) {
+	beacons := make([]bdata.BeaconV1, 0, 0)
+	pos := bdata.GeoPointV1{}
 
-    public getBeaconByUdi(correlationId: string, beaconId: string,
-        callback: (err: any, page: BeaconV1) => void): void {
-            this._persistence.getOneByUdi(correlationId, beaconId, callback);
-    }
+	if udis == nil || len(udis) == 0 {
 
-    public calculatePosition(correlationId: string, siteId: string, udis: string[],
-        callback: (err: any, position: any) => void): void {
-            let beacons: BeaconV1[];
-            let position: any = null;
+		return nil, nil
+	}
 
-            if (udis == null || udis.length == 0) {
-                callback(null, null);
-                return;
-            }
+	page, getErr := c.persistence.GetPageByFilter(
+		correlationId, cdata.NewFilterParamsFromTuples(
+			"site_id", siteId,
+			"udis", udis),
+		nil)
 
-            async.series([
-                (callback) => {
-                    this._persistence.getPageByFilter(
-                        correlationId,
-                        FilterParams.fromTuples(
-                            'site_id', siteId,
-                            'udis', udis
-                        ),
-                        null,
-                        (err, page) => {
-                            beacons = page ? page.data : [];
-                            callback(err);
-                        }
-                    );
-                },
-                (callback) => {
-                    let lat = 0;
-                    let lng = 0;
-                    let count = 0;
+	if getErr != nil || page == nil {
+		return nil, getErr
+	}
+	copy(beacons, page.Data)
 
-                    for (let beacon of beacons) {
-                        if (beacon.center != null 
-                            && beacon.center.type == 'Point'
-                            && _.isArray(beacon.center.coordinates)) {
-                                lng += beacon.center.coordinates[0];
-                                lat += beacon.center.coordinates[1];
-                                count += 1;
-                            }
-                    }
+	var lat float32 = 0
+	var lng float32 = 0
+	var count = 0
 
-                    if (count > 0) {
-                        position = {
-                            type: 'Point',
-                            coordinates: [lng / count, lat / count]
-                        }
-                    }
+	for _, beacon := range beacons {
+		if beacon.Center.Type == "Point" {
+			lng += beacon.Center.Lat
+			lat += beacon.Center.Lng
+			count += 1
+		}
+	}
 
-                    callback();
-                }
-            ], (err) => { callback(err, err == null ? position : null);  });
-    }
+	if count > 0 {
+		position.Type = "Point"
+		position.Lng = lng / (float32)(count)
+		position.Lat = lat / (float32)(count)
 
-    public createBeacon(correlationId: string, beacon: BeaconV1,
-        callback: (err: any, beacon: BeaconV1) => void): void {
-            beacon.id = beacon.id || IdGenerator.nextLong();
-            beacon.type = beacon.type || BeaconTypeV1.Unknown;
+	}
 
-            this._persistence.create(correlationId, beacon, callback);
-    }
+	return &pos, nil
+}
 
-    public updateBeacon(correlationId: string, beacon: BeaconV1,
-        callback: (err: any, beacon: BeaconV1) => void): void {
-            beacon.type = beacon.type || BeaconTypeV1.Unknown;
+func (c *BeaconsController) CreateBeacon(correlationId string, beacon bdata.BeaconV1) (res *bdata.BeaconV1, err error) {
 
-            this._persistence.update(correlationId, beacon, callback);
-    }
+	if beacon.Id == "" {
+		beacon.Id = cdata.IdGenerator.NextLong()
+	}
 
-    public deleteBeaconById(correlationId: string, beaconId: string,
-        callback: (err: any, beacon: BeaconV1) => void): void {
-            this._persistence.deleteById(correlationId, beaconId, callback);
-    }
+	if beacon.Type == "" {
+		beacon.Type = bdata.BeaconTypeV1.Unknown
+	}
 
+	return c.persistence.Create(correlationId, beacon)
+}
+
+func (c *BeaconsController) UpdateBeacon(correlationId string, beacon bdata.BeaconV1) (res *bdata.BeaconV1, err error) {
+
+	if beacon.Type == "" {
+		beacon.Type = bdata.BeaconTypeV1.Unknown
+	}
+
+	return c.persistence.Update(correlationId, beacon)
+}
+
+func (c *BeaconsController) DeleteBeaconById(correlationId string, beaconId string) (beacon *bdata.BeaconV1, err error) {
+	return c.persistence.DeleteById(correlationId, beaconId)
 }

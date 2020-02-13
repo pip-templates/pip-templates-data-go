@@ -1,28 +1,22 @@
-import { FilterParams } from 'pip-services3-commons-node';
-import { PagingParams } from 'pip-services3-commons-node';
-import { DataPage } from 'pip-services3-commons-node';
+package logic
 
-import { BeaconV1 } from '../../src/data/version1/BeaconV1';
+import (
+	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+)
 
-export interface IBeaconsController {
-    getBeacons(correlationId: string, filter: FilterParams, paging: PagingParams,
-        callback: (err: any, page: DataPage<BeaconV1>) => void): void;
+type IBeaconsController interface {
+	GetBeacons(correlationId string, filter *cdata.FilterParams, paging *cdata.PagingParams) (page *bdata.BeaconV1DataPage, err error)
 
-    getBeaconById(correlationId: string, beaconId: string,
-        callback: (err: any, page: BeaconV1) => void): void;
+	GetBeaconById(correlationId string, beaconId string) (item *bdata.BeaconV1, err error)
 
-    getBeaconByUdi(correlationId: string, beaconId: string,
-        callback: (err: any, page: BeaconV1) => void): void;
+	GetBeaconByUdi(correlationId string, beaconId string) (item *bdata.BeaconV1, err error)
 
-    calculatePosition(correlationId: string, siteId: string, udis: string[],
-        callback: (err: any, position: any) => void): void;
+	CalculatePosition(correlationId string, siteId string, udis []string) (position *bdata.GeoPointV1, err error)
 
-    createBeacon(correlationId: string, beacon: BeaconV1,
-        callback: (err: any, beacon: BeaconV1) => void): void;
+	CreateBeacon(correlationId string, beacon bdata.BeaconV1) (item *bdata.BeaconV1, err error)
 
-    updateBeacon(correlationId: string, beacon: BeaconV1,
-        callback: (err: any, beacon: BeaconV1) => void): void;
+	UpdateBeacon(correlationId string, beacon bdata.BeaconV1) (item *bdata.BeaconV1, err error)
 
-    deleteBeaconById(correlationId: string, beaconId: string,
-        callback: (err: any, beacon: BeaconV1) => void): void;
+	DeleteBeaconById(correlationId string, beaconId string) (item *bdata.BeaconV1, err error)
 }

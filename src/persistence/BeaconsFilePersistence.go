@@ -1,23 +1,25 @@
-import { JsonFilePersister } from 'pip-services3-data-node';
+package persistence
 
-import { BeaconV1 } from '../data/version1/BeaconV1';
-import { BeaconsMemoryPersistence } from './BeaconsMemoryPersistence';
-import { ConfigParams } from 'pip-services3-commons-node';
+import (
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	cmperist "github.com/pip-services3-go/pip-services3-data-go/persistence"
+)
 
-export class BeaconsFilePersistence extends BeaconsMemoryPersistence {
-    protected _persister: JsonFilePersister<BeaconV1>;
+type BeaconsFilePersistence struct {
+	BeaconsMemoryPersistence
+	persister *cmperist.JsonFilePersister
+}
 
-    constructor(path?: string) {
-        super();
+func NewBeaconsFilePersistence(path string) *BeaconsFilePersistence {
+	bfp := BeaconsFilePersistence{}
+	bfp.BeaconsMemoryPersistence = *NewBeaconsMemoryPersistence()
+	bfp.persister = cmperist.NewJsonFilePersister(bfp.Prototype, path)
+	bfp.Loader = bfp.persister
+	bfp.Saver = bfp.persister
+	return &bfp
+}
 
-        this._persister = new JsonFilePersister<BeaconV1>(path);
-        this._loader = this._persister;
-        this._saver = this._persister;
-    }
-
-    public configure(config: ConfigParams) {
-        super.configure(config);
-        this._persister.configure(config);
-    }
-    
+func (c *BeaconsFilePersistence) Configure(config *cconf.ConfigParams) {
+	c.BeaconsMemoryPersistence.Configure(config)
+	c.persister.Configure(config)
 }

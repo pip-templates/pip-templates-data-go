@@ -1,119 +1,121 @@
-import { CommandSet, FilterParams, PagingParams } from 'pip-services3-commons-node';
-import { ICommand } from 'pip-services3-commons-node';
-import { Command } from 'pip-services3-commons-node';
-import { ObjectSchema } from 'pip-services3-commons-node';
-import { FilterParamsSchema } from 'pip-services3-commons-node';
-import { PagingParamsSchema } from 'pip-services3-commons-node';
-import { ArraySchema } from 'pip-services3-commons-node';
-import { TypeCode } from 'pip-services3-commons-node';
-import { Parameters } from 'pip-services3-commons-node';
+package logic
 
-import { BeaconV1Schema } from '../../src/data/version1/BeaconV1Schema';
-import { IBeaconsController } from '../../src/logic/IBeaconsController';
+import (
+	"encoding/json"
+	"strings"
 
-export class BeaconsCommandSet extends CommandSet {
-    private _controller: IBeaconsController;
+	ccomand "github.com/pip-services3-go/pip-services3-commons-go/commands"
+	cconv "github.com/pip-services3-go/pip-services3-commons-go/convert"
+	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+	crun "github.com/pip-services3-go/pip-services3-commons-go/run"
+	cvalid "github.com/pip-services3-go/pip-services3-commons-go/validate"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+)
 
-    constructor(controller: IBeaconsController) {
-        super();
+type BeaconsCommandSet struct {
+	ccomand.CommandSet
+	controller IBeaconsController
+}
 
-        this._controller = controller;
+func NewBeaconsCommandSet(controller IBeaconsController) *BeaconsCommandSet {
 
-        this.addCommand(this.makeGetBeaconsCommand());
-        this.addCommand(this.makeGetBeaconByIdCommand());
-        this.addCommand(this.makeGetBeaconByUdiCommand());
-        this.addCommand(this.makeCalculatePositionCommand());
-        this.addCommand(this.makeCreateBeaconCommand());
-        this.addCommand(this.makeUpdateBeaconCommand());
-        this.addCommand(this.makeDeleteBeaconByIdCommand());
-    }
+	bcs := BeaconsCommandSet{}
+	bcs.CommandSet = *ccomand.NewCommandSet()
+	bcs.controller = controller
+	bcs.AddCommand(bcs.makeGetBeaconsCommand())
+	bcs.AddCommand(bcs.makeGetBeaconByIdCommand())
+	bcs.AddCommand(bcs.makeGetBeaconByUdiCommand())
+	bcs.AddCommand(bcs.makeCalculatePositionCommand())
+	bcs.AddCommand(bcs.makeCreateBeaconCommand())
+	bcs.AddCommand(bcs.makeUpdateBeaconCommand())
+	bcs.AddCommand(bcs.makeDeleteBeaconByIdCommand())
+	return &bcs
+}
 
-    private makeGetBeaconsCommand(): ICommand {
-        return new Command(
-            'get_beacons',
-            new ObjectSchema(true)
-                .withOptionalProperty('filter', new FilterParamsSchema())
-                .withOptionalProperty('paging', new PagingParamsSchema()),
-            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let filter = FilterParams.fromValue(args.get('filter'));
-                let paging = PagingParams.fromValue(args.get('paging'));
-                this._controller.getBeacons(correlationId, filter, paging, callback);
-            }
-        );
-    }
+func (c *BeaconsCommandSet) makeGetBeaconsCommand() ccomand.ICommand {
+	return ccomand.NewCommand(
+		"get_beacons",
+		cvalid.NewObjectSchema().
+			WithOptionalProperty("filter", cvalid.NewFilterParamsSchema()).
+			WithOptionalProperty("paging", cvalid.NewPagingParamsSchema()),
+		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
+			filter := cdata.NewFilterParamsFromValue(args.Get("filter"))
+			paging := cdata.NewPagingParamsFromValue(args.Get("paging"))
+			return c.controller.GetBeacons(correlationId, filter, paging)
+		})
+}
 
-    private makeGetBeaconByIdCommand(): ICommand {
-        return new Command(
-            'get_beacon_by_id',
-            new ObjectSchema(true)
-                .withRequiredProperty('beacon_id', TypeCode.String),
-            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let beaconId = args.getAsString('beacon_id');
-                this._controller.getBeaconById(correlationId, beaconId, callback);
-            }
-        );
-    }
+func (c *BeaconsCommandSet) makeGetBeaconByIdCommand() ccomand.ICommand {
+	return ccomand.NewCommand(
+		"get_beacon_by_id",
+		cvalid.NewObjectSchema().
+			WithRequiredProperty("beacon_id", cconv.String),
+		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
+			beaconId := args.GetAsString("beacon_id")
+			return c.controller.GetBeaconById(correlationId, beaconId)
+		})
+}
 
-    private makeGetBeaconByUdiCommand(): ICommand {
-        return new Command(
-            'get_beacon_by_udi',
-            new ObjectSchema(true)
-                .withRequiredProperty('udi', TypeCode.String),
-            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let udi = args.getAsString('udi');
-                this._controller.getBeaconByUdi(correlationId, udi, callback);
-            }
-        );
-    }
+func (c *BeaconsCommandSet) makeGetBeaconByUdiCommand() ccomand.ICommand {
+	return ccomand.NewCommand(
+		"get_beacon_by_udi",
+		cvalid.NewObjectSchema().
+			WithRequiredProperty("udi", cconv.String),
+		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
+			udi := args.GetAsString("udi")
+			return c.controller.GetBeaconByUdi(correlationId, udi)
+		})
+}
 
-    private makeCalculatePositionCommand(): ICommand {
-        return new Command(
-            'calculate_position',
-            new ObjectSchema(true)
-                .withRequiredProperty('site_id', TypeCode.String)
-                .withRequiredProperty('udis', new ArraySchema(TypeCode.String)),
-            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let siteId = args.getAsString('site_id');
-                let udis = args.getAsObject('udis');
-                this._controller.calculatePosition(correlationId, siteId, udis, callback);
-            }
-        );
-    }
+func (c *BeaconsCommandSet) makeCalculatePositionCommand() ccomand.ICommand {
+	return ccomand.NewCommand(
+		"calculate_position",
+		cvalid.NewObjectSchema().
+			WithRequiredProperty("site_id", cconv.String).
+			WithRequiredProperty("udis", cvalid.NewArraySchema(cconv.String)),
+		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
+			siteId := args.GetAsString("site_id")
+			udis := args.GetAsString("udis")
+			arrUdis := make([]string, 0, 0)
+			arrUdis = strings.Split(udis, ",")
+			return c.controller.CalculatePosition(correlationId, siteId, arrUdis)
+		})
+}
 
-    private makeCreateBeaconCommand(): ICommand {
-        return new Command(
-            'create_beacon',
-            new ObjectSchema(true)
-                .withRequiredProperty('beacon', new BeaconV1Schema()),
-            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let beacon = args.getAsObject('beacon');
-                this._controller.createBeacon(correlationId, beacon, callback);
-            }
-        );
-    }   
+func (c *BeaconsCommandSet) makeCreateBeaconCommand() ccomand.ICommand {
+	return ccomand.NewCommand(
+		"create_beacon",
+		cvalid.NewObjectSchema().
+			WithRequiredProperty("beacon", bdata.NewBeaconV1Schema()),
+		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
+			val, _ := json.Marshal(args.Get("beacon"))
+			var beacon bdata.BeaconV1
+			json.Unmarshal(val, &beacon)
 
-    private makeUpdateBeaconCommand(): ICommand {
-        return new Command(
-            'update_beacon',
-            new ObjectSchema(true)
-                .withRequiredProperty('beacon', new BeaconV1Schema()),
-            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let beacon = args.getAsObject('beacon');
-                this._controller.updateBeacon(correlationId, beacon, callback);
-            }
-        );
-    }   
-    
-    private makeDeleteBeaconByIdCommand(): ICommand {
-        return new Command(
-            'delete_beacon_by_id',
-            new ObjectSchema(true)
-                .withRequiredProperty('beacon_id', TypeCode.String),
-            (correlationId: string, args: Parameters, callback: (err: any, result: any) => void) => {
-                let beaconId = args.getAsString('beacon_id');
-                this._controller.deleteBeaconById(correlationId, beaconId, callback);
-            }
-        );
-    }
+			return c.controller.CreateBeacon(correlationId, beacon)
+		})
+}
 
+func (c *BeaconsCommandSet) makeUpdateBeaconCommand() ccomand.ICommand {
+	return ccomand.NewCommand(
+		"update_beacon",
+		cvalid.NewObjectSchema().
+			WithRequiredProperty("beacon", bdata.NewBeaconV1Schema()),
+		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
+			val, _ := json.Marshal(args.Get("beacon"))
+			var beacon bdata.BeaconV1
+			json.Unmarshal(val, &beacon)
+			return c.controller.UpdateBeacon(correlationId, beacon)
+		})
+}
+
+func (c *BeaconsCommandSet) makeDeleteBeaconByIdCommand() ccomand.ICommand {
+	return ccomand.NewCommand(
+		"delete_beacon_by_id",
+		cvalid.NewObjectSchema().
+			WithRequiredProperty("beacon_id", cconv.String),
+		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
+			beaconId := args.GetAsString("beacon_id")
+			return c.controller.DeleteBeaconById(correlationId, beaconId)
+		})
 }
