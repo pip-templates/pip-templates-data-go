@@ -1,52 +1,44 @@
 package test_clients
 
-// import { ConfigParams } from 'pip-services3-commons-node';
-// import { Descriptor } from 'pip-services3-commons-node';
-// import { References } from 'pip-services3-commons-node';
+import (
+	"testing"
 
-// import { BeaconsMemoryPersistence } from '../../../src/persistence/BeaconsMemoryPersistence';
-// import { BeaconsController } from '../../../src/logic/BeaconsController';
-// import { BeaconsDirectClientV1 } from '../../../src/clients/version1/BeaconsDirectClientV1';
-// import { BeaconsClientV1Fixture } from './BeaconsClientV1Fixture';
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
+	bclients "github.com/pip-templates/pip-templates-microservice-go/src/clients/version1"
+	blogic "github.com/pip-templates/pip-templates-microservice-go/src/logic"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+)
 
-// suite('BeaconsDirectClientV1', () => {
-//     let persistence: BeaconsMemoryPersistence;
-//     let controller: BeaconsController;
-//     let client: BeaconsDirectClientV1;
-//     let fixture: BeaconsClientV1Fixture;
+func TestBeaconsDirectClientV1(t *testing.T) {
 
-//     setup((done) => {
-//         persistence = new BeaconsMemoryPersistence();
-//         persistence.configure(new ConfigParams());
+	var persistence *bpersist.BeaconsMemoryPersistence
+	var controller *blogic.BeaconsController
+	var client *bclients.BeaconsDirectClientV1
+	var fixture *BeaconsClientV1Fixture
 
-//         controller = new BeaconsController();
-//         controller.configure(new ConfigParams());
+	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence.Configure(cconf.NewEmptyConfigParams())
 
-//         client = new BeaconsDirectClientV1();
+	controller = blogic.NewBeaconsController()
+	controller.Configure(cconf.NewEmptyConfigParams())
+	client = bclients.NewBeaconsDirectClientV1()
 
-//         let references = References.fromTuples(
-//             new Descriptor('beacons', 'persistence', 'memory', 'default', '1.0'), persistence,
-//             new Descriptor('beacons', 'controller', 'default', 'default', '1.0'), controller,
-//             new Descriptor('beacons', 'client', 'direct', 'default', '1.0'), client
-//         );
+	references := cref.NewReferencesFromTuples(
+		cref.NewDescriptor("beacons", "persistence", "memory", "default", "1.0"), persistence,
+		cref.NewDescriptor("beacons", "controller", "default", "default", "1.0"), controller,
+		cref.NewDescriptor("beacons", "client", "direct", "default", "1.0"), client,
+	)
 
-//         controller.setReferences(references);
-//         client.setReferences(references);
+	controller.SetReferences(references)
+	client.SetReferences(references)
+	fixture = NewBeaconsClientV1Fixture(client)
 
-//         fixture = new BeaconsClientV1Fixture(client);
+	persistence.Open("")
+	defer persistence.Close("")
 
-//         persistence.open(null, done);
-//     });
+	t.Run("TestBeaconsDirectClientV1:CRUD Operations", fixture.TestCrudOperations)
+	persistence.Clear("")
+	t.Run("TestBeaconsDirectClientV:1Calculate Positions", fixture.TestCalculatePosition)
 
-//     teardown((done) => {
-//         persistence.close(null, done);
-//     });
-
-//     test('CRUD Operations', (done) => {
-//         fixture.testCrudOperations(done);
-//     });
-
-//     test('Calculate Positions', (done) => {
-//         fixture.testCalculatePosition(done);
-//     });
-// });
+}

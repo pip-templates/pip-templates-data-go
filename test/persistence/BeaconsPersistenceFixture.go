@@ -1,11 +1,12 @@
 package test_persistence
 
 import (
+	"testing"
+
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
 	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
 	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 type BeaconsPersistenceFixture struct {
@@ -16,7 +17,6 @@ type BeaconsPersistenceFixture struct {
 }
 
 func NewBeaconsPersistenceFixture(persistence bpersist.IBeaconsPersistence) *BeaconsPersistenceFixture {
-	//assert.NotNil(persistence)
 	bpf := BeaconsPersistenceFixture{}
 	bpf.Beacon1 = bdata.BeaconV1{
 		Id:      "1",
@@ -47,7 +47,6 @@ func NewBeaconsPersistenceFixture(persistence bpersist.IBeaconsPersistence) *Bea
 	}
 	bpf.persistence = persistence
 	return &bpf
-
 }
 
 func (c *BeaconsPersistenceFixture) testCreateBeacons(t *testing.T) {

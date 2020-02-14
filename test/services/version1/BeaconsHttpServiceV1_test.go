@@ -1,239 +1,215 @@
 package test_services
 
-// let _ = require('lodash');
-// let async = require('async');
-// let assert = require('chai').assert;
-// let restify = require('restify');
+import (
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"testing"
 
-// import { ConfigParams } from 'pip-services3-commons-node';
-// import { Descriptor } from 'pip-services3-commons-node';
-// import { References } from 'pip-services3-commons-node';
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+	blogic "github.com/pip-templates/pip-templates-microservice-go/src/logic"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	bservices "github.com/pip-templates/pip-templates-microservice-go/src/services/version1"
+	"github.com/stretchr/testify/assert"
+)
 
-// import { BeaconV1 } from '../../../src/data/version1/BeaconV1';
-// import { BeaconTypeV1 } from '../../../src/data/version1/BeaconTypeV1';
-// import { BeaconsMemoryPersistence } from '../../../src/persistence/BeaconsMemoryPersistence';
-// import { BeaconsController } from '../../../src/logic/BeaconsController';
-// import { BeaconsHttpServiceV1 } from '../../../src/services/version1/BeaconsHttpServiceV1';
+var Beacon1 bdata.BeaconV1 = bdata.BeaconV1{
+	Id:      "1",
+	Udi:     "00001",
+	Type:    bdata.BeaconTypeV1.AltBeacon,
+	Site_id: "1",
+	Label:   "TestBeacon1",
+	Center:  bdata.GeoPointV1{Type: "Point", Lat: 0, Lng: 0},
+	Radius:  50,
+}
 
-// const BEACON1: BeaconV1 = {
-//     id: '1',
-//     udi: '00001',
-//     type: BeaconTypeV1.AltBeacon,
-//     site_id: '1',
-//     label: 'TestBeacon1',
-//     center: { type: 'Point', coordinates: [ 0, 0 ] },
-//     radius: 50
-// };
-// const BEACON2: BeaconV1 = {
-//     id: '2',
-//     udi: '00002',
-//     type: BeaconTypeV1.iBeacon,
-//     site_id: '1',
-//     label: 'TestBeacon2',
-//     center: { type: 'Point', coordinates: [ 2, 2 ] },
-//     radius: 70
-// };
+var Beacon2 bdata.BeaconV1 = bdata.BeaconV1{
+	Id:      "2",
+	Udi:     "00002",
+	Type:    bdata.BeaconTypeV1.IBeacon,
+	Site_id: "1",
+	Label:   "TestBeacon2",
+	Center:  bdata.GeoPointV1{Type: "Point", Lat: 2, Lng: 2},
+	Radius:  70,
+}
 
-// suite('BeaconsHttpServiceV1', () => {
-//     let persistence: BeaconsMemoryPersistence;
-//     let controller: BeaconsController;
-//     let service: BeaconsHttpServiceV1;
-//     let rest: any;
+var persistence *bpersist.BeaconsMemoryPersistence
+var controller *blogic.BeaconsController
+var service *bservices.BeaconsHttpServiceV1
+var url string = "http://localhost:3000"
 
-//     setup((done) => {
-//         let url = "http://localhost:3000";
-//         rest = restify.createJsonClient({ url: url, version: '*'});
+func TestBeaconsHttpServiceV1(t *testing.T) {
 
-//         persistence = new BeaconsMemoryPersistence();
-//         persistence.configure(new ConfigParams());
+	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence.Configure(cconf.NewEmptyConfigParams())
 
-//         controller = new BeaconsController();
-//         controller.configure(new ConfigParams());
+	controller = blogic.NewBeaconsController()
+	controller.Configure(cconf.NewEmptyConfigParams())
+	service = bservices.NewBeaconsHttpServiceV1()
+	service.Configure(cconf.NewConfigParamsFromTuples(
+		"connection.protocol", "http",
+		"connection.port", "3000",
+		"connection.host", "localhost",
+	))
 
-//         service = new BeaconsHttpServiceV1();
-//         service.configure(ConfigParams.fromTuples(
-//             'connection.protocol', 'http',
-//             'connection.port', 3000,
-//             'connection.host', 'localhost'
-//         ));
+	references := cref.NewReferencesFromTuples(
+		cref.NewDescriptor("beacons", "persistence", "memory", "default", "1.0"), persistence,
+		cref.NewDescriptor("beacons", "controller", "default", "default", "1.0"), controller,
+		cref.NewDescriptor("beacons", "service", "http", "default", "1.0"), service,
+	)
 
-//         let references = References.fromTuples(
-//             new Descriptor('beacons', 'persistence', 'memory', 'default', '1.0'), persistence,
-//             new Descriptor('beacons', 'controller', 'default', 'default', '1.0'), controller,
-//             new Descriptor('beacons', 'service', 'http', 'default', '1.0'), service
-//         );
+	controller.SetReferences(references)
+	service.SetReferences(references)
 
-//         controller.setReferences(references);
-//         service.setReferences(references);
+	opnErr := persistence.Open("")
+	if opnErr != nil {
+		panic("Can't open persistence")
+	}
+	service.Open("")
+	defer service.Close("")
+	defer persistence.Close("")
 
-//         persistence.open(null, (err) => {
-//             if (err) {
-//                 done(err);
-//                 return;
-//             }
+	var beacon1 bdata.BeaconV1
+	// Create the first beacon
+	bodyMap := make(map[string]interface{})
+	bodyMap["beacon"] = Beacon1
+	jsonBody, _ := json.Marshal(bodyMap)
+	bodyReader := bytes.NewReader(jsonBody)
+	postResponse, postErr := http.Post(url+"/v1/beacons/create_beacon", "application/json", bodyReader)
+	assert.Nil(t, postErr)
+	resBody, bodyErr := ioutil.ReadAll(postResponse.Body)
+	assert.Nil(t, bodyErr)
+	var beacon bdata.BeaconV1
+	jsonErr := json.Unmarshal(resBody, &beacon)
+	assert.Nil(t, jsonErr)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon1.Udi, beacon.Udi)
+	assert.Equal(t, Beacon1.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon1.Type, beacon.Type)
+	assert.Equal(t, Beacon1.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-//             service.open(null, done);
-//         });
-//     });
+	// Create the second beacon
+	bodyMap = make(map[string]interface{})
+	bodyMap["beacon"] = Beacon2
+	jsonBody, _ = json.Marshal(bodyMap)
+	bodyReader = bytes.NewReader(jsonBody)
+	postResponse, postErr = http.Post(url+"/v1/beacons/create_beacon", "application/json", bodyReader)
+	assert.Nil(t, postErr)
+	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
+	assert.Nil(t, bodyErr)
 
-//     teardown((done) => {
-//         service.close(null, (err) => {
-//             persistence.close(null, done);
-//         });
-//     });
+	jsonErr = json.Unmarshal(resBody, &beacon)
+	assert.Nil(t, jsonErr)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon2.Udi, beacon.Udi)
+	assert.Equal(t, Beacon2.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon2.Type, beacon.Type)
+	assert.Equal(t, Beacon2.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-//     test('CRUD Operations', (done) => {
-//         let beacon1: BeaconV1;
+	// Get all beacons
+	postResponse, postErr = http.Post(url+"/v1/beacons/get_beacons", "application/json", nil)
+	assert.Nil(t, postErr)
+	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
+	assert.Nil(t, bodyErr)
+	var page bdata.BeaconV1DataPage
+	jsonErr = json.Unmarshal(resBody, &page)
+	assert.Nil(t, jsonErr)
+	assert.NotNil(t, page)
+	assert.Len(t, page.Data, 2)
+	beacon1 = *page.Data[0]
 
-//         async.series([
-//             // Create the first beacon
-//             (callback) => {
-//                 rest.post('/v1/beacons/create_beacon',
-//                     {
-//                         beacon: BEACON1
-//                     },
-//                     (err, req, res, beacon) => {
-//                         assert.isNull(err);
+	// Update the beacon
+	beacon1.Label = "ABC"
+	bodyMap = make(map[string]interface{})
+	bodyMap["beacon"] = beacon1
 
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON1.udi, beacon.udi);
-//                         assert.equal(BEACON1.site_id, beacon.site_id);
-//                         assert.equal(BEACON1.type, beacon.type);
-//                         assert.equal(BEACON1.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
+	jsonBody, _ = json.Marshal(bodyMap)
+	bodyReader = bytes.NewReader(jsonBody)
+	postResponse, postErr = http.Post(url+"/v1/beacons/update_beacon", "application/json", bodyReader)
+	assert.Nil(t, postErr)
+	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
+	assert.Nil(t, bodyErr)
 
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Create the second beacon
-//             (callback) => {
-//                 rest.post('/v1/beacons/create_beacon',
-//                     {
-//                         beacon: BEACON2
-//                     },
-//                     (err, req, res, beacon) => {
-//                         assert.isNull(err);
+	jsonErr = json.Unmarshal(resBody, &beacon)
+	assert.Nil(t, jsonErr)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon1.Id, beacon.Id)
+	assert.Equal(t, "ABC", beacon.Label)
 
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON2.udi, beacon.udi);
-//                         assert.equal(BEACON2.site_id, beacon.site_id);
-//                         assert.equal(BEACON2.type, beacon.type);
-//                         assert.equal(BEACON2.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
+	// Get beacon by udi
+	bodyMap = make(map[string]interface{})
+	bodyMap["udi"] = beacon1.Udi
 
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Get all beacons
-//             (callback) => {
-//                 rest.post('/v1/beacons/get_beacons',
-//                     {
-//                         filter: new FilterParams(),
-//                         paging: new PagingParams()
-//                     },
-//                     (err, req, res, page) => {
-//                         assert.isNull(err);
+	jsonBody, _ = json.Marshal(bodyMap)
+	bodyReader = bytes.NewReader(jsonBody)
+	postResponse, postErr = http.Post(url+"/v1/beacons/get_beacon_by_udi", "application/json", bodyReader)
+	assert.Nil(t, postErr)
+	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
+	assert.Nil(t, bodyErr)
 
-//                         assert.isObject(page);
-//                         assert.lengthOf(page.data, 2);
+	jsonErr = json.Unmarshal(resBody, &beacon)
+	assert.Nil(t, jsonErr)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon1.Id, beacon.Id)
 
-//                         beacon1 = page.data[0];
+	// Calculate position for one beacon
+	bodyMap = make(map[string]interface{})
+	bodyMap["site_id"] = "1"
+	bodyMap["udis"] = []string{"00001"}
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Update the beacon
-//             (callback) => {
-//                 beacon1.label = 'ABC';
+	jsonBody, _ = json.Marshal(bodyMap)
+	bodyReader = bytes.NewReader(jsonBody)
+	postResponse, postErr = http.Post(url+"/v1/beacons/calculate_position", "application/json", bodyReader)
+	assert.Nil(t, postErr)
+	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
+	assert.Nil(t, bodyErr)
 
-//                 rest.post('/v1/beacons/update_beacon',
-//                     {
-//                         beacon: beacon1
-//                     },
-//                     (err, req, res, beacon) => {
-//                         assert.isNull(err);
+	var position bdata.GeoPointV1
+	jsonErr = json.Unmarshal(resBody, &position)
+	assert.Nil(t, jsonErr)
+	assert.NotNil(t, beacon)
 
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
-//                         assert.equal('ABC', beacon.label);
+	assert.NotNil(t, position)
+	assert.Equal(t, "Point", position.Type)
+	assert.Equal(t, (float32)(0.0), position.Lat)
+	assert.Equal(t, (float32)(0.0), position.Lng)
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Get beacon by udi
-//             (callback) => {
-//                 rest.post('/v1/beacons/get_beacon_by_udi',
-//                     {
-//                         udi: beacon1.udi
-//                     },
-//                     (err, req, res, beacon) => {
-//                         assert.isNull(err);
+	// Delete the beacon
+	bodyMap = make(map[string]interface{})
+	bodyMap["beacon_id"] = beacon1.Id
 
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
+	jsonBody, _ = json.Marshal(bodyMap)
+	bodyReader = bytes.NewReader(jsonBody)
+	postResponse, postErr = http.Post(url+"/v1/beacons/delete_beacon_by_id", "application/json", bodyReader)
+	assert.Nil(t, postErr)
+	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
+	assert.Nil(t, bodyErr)
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Calculate position for one beacon
-//             (callback) => {
-//                 rest.post('/v1/beacons/calculate_position',
-//                     {
-//                         site_id: '1',
-//                         udis: ['00001']
-//                     },
-//                     (err, req, res, position) => {
-//                         assert.isNull(err);
+	jsonErr = json.Unmarshal(resBody, &beacon)
+	assert.Nil(t, jsonErr)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon1.Id, beacon.Id)
 
-//                         assert.isObject(position);
-//                         assert.equal('Point', position.type);
-//                         assert.lengthOf(position.coordinates, 2);
-//                         assert.equal(0, position.coordinates[0]);
-//                         assert.equal(0, position.coordinates[1]);
+	// Try to get deleted beacon
+	bodyMap = make(map[string]interface{})
+	bodyMap["beacon_id"] = beacon1.Id
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Delete the beacon
-//             (callback) => {
-//                 rest.post('/v1/beacons/delete_beacon_by_id',
-//                     {
-//                         beacon_id: beacon1.id
-//                     },
-//                     (err, req, res, beacon) => {
-//                         assert.isNull(err);
+	jsonBody, _ = json.Marshal(bodyMap)
+	bodyReader = bytes.NewReader(jsonBody)
+	postResponse, postErr = http.Post(url+"/v1/beacons/get_beacon_by_id", "application/json", bodyReader)
+	assert.Nil(t, postErr)
+	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
+	assert.Nil(t, bodyErr)
 
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
+	beacon = bdata.BeaconV1{}
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Try to get deleted beacon
-//             (callback) => {
-//                 rest.post('/v1/beacons/get_beacon_by_id',
-//                     {
-//                         beacon_id: beacon1.id
-//                     },
-//                     (err, req, res, beacon) => {
-//                         assert.isNull(err);
-
-//                         //assert.isEmpty(beacon || null);
-
-//                         callback();
-//                     }
-//                 )
-//             }
-//         ], done);
-//     });
-
-// });
+	jsonErr = json.Unmarshal(resBody, &beacon)
+	assert.Nil(t, jsonErr)
+	assert.NotNil(t, beacon)
+	assert.Empty(t, beacon)
+}

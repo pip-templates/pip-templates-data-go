@@ -2,6 +2,7 @@ package clients
 
 import (
 	"encoding/json"
+	"fmt"
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
 	rpcclient "github.com/pip-services3-go/pip-services3-rpc-go/clients"
@@ -26,6 +27,9 @@ func (c *BeaconsHttpClientV1) GetBeacons(correlationId string, filter *cdata.Fil
 	if calErr != nil {
 		return nil, calErr
 	}
+	if (string)(calValue.([]byte)) == "null" {
+		return nil, nil
+	}
 	var data bdata.BeaconV1DataPage
 	convErr := json.Unmarshal(calValue.([]byte), &data)
 	if convErr != nil {
@@ -40,6 +44,9 @@ func (c *BeaconsHttpClientV1) GetBeaconById(correlationId string, beaconId strin
 	calValue, calErr := c.CallCommand("get_beacon_by_id", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
+	}
+	if (string)(calValue.([]byte)) == "null" {
+		return nil, nil
 	}
 	var data bdata.BeaconV1
 	convErr := json.Unmarshal(calValue.([]byte), &data)
@@ -56,6 +63,9 @@ func (c *BeaconsHttpClientV1) GetBeaconByUdi(correlationId string, udi string) (
 	if calErr != nil {
 		return nil, calErr
 	}
+	if (string)(calValue.([]byte)) == "null" {
+		return nil, nil
+	}
 	var data bdata.BeaconV1
 	convErr := json.Unmarshal(calValue.([]byte), &data)
 	if convErr != nil {
@@ -65,13 +75,21 @@ func (c *BeaconsHttpClientV1) GetBeaconByUdi(correlationId string, udi string) (
 }
 
 func (c *BeaconsHttpClientV1) CalculatePosition(correlationId string, siteId string, udis []string) (position *bdata.GeoPointV1, err error) {
-	params := cdata.NewEmptyStringValueMap()
-	params.Put("site_id", siteId)
-	params.Put("udis", udis)
-	calValue, calErr := c.CallCommand("calculate_position", correlationId, params, nil)
+
+	params := make(map[string]interface{})
+	params["site_id"] = siteId
+	params["udis"] = udis
+
+	calValue, calErr := c.CallCommand("calculate_position", correlationId, nil, params)
 	if calErr != nil {
 		return nil, calErr
 	}
+	if (string)(calValue.([]byte)) == "null" {
+		return nil, nil
+	}
+
+	fmt.Println((string)(calValue.([]byte)))
+
 	var data bdata.GeoPointV1
 	convErr := json.Unmarshal(calValue.([]byte), &data)
 	if convErr != nil {
@@ -81,11 +99,16 @@ func (c *BeaconsHttpClientV1) CalculatePosition(correlationId string, siteId str
 }
 
 func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon bdata.BeaconV1) (res *bdata.BeaconV1, err error) {
-	params := cdata.NewEmptyStringValueMap()
-	params.Put("beacon", beacon)
+
+	params := make(map[string]interface{})
+	params["beacon"] = beacon
+
 	calValue, calErr := c.CallCommand("create_beacon", correlationId, nil, params)
 	if calErr != nil {
 		return nil, calErr
+	}
+	if (string)(calValue.([]byte)) == "null" {
+		return nil, nil
 	}
 	var data bdata.BeaconV1
 	convErr := json.Unmarshal(calValue.([]byte), &data)
@@ -96,12 +119,16 @@ func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon bdata.Be
 }
 
 func (c *BeaconsHttpClientV1) UpdateBeacon(correlationId string, beacon bdata.BeaconV1) (res *bdata.BeaconV1, err error) {
-	params := cdata.NewEmptyStringValueMap()
-	params.Put("beacon", beacon)
+
+	params := make(map[string]interface{})
+	params["beacon"] = beacon
 
 	calValue, calErr := c.CallCommand("update_beacon", correlationId, nil, params)
 	if calErr != nil {
 		return nil, calErr
+	}
+	if (string)(calValue.([]byte)) == "null" {
+		return nil, nil
 	}
 	var data bdata.BeaconV1
 	convErr := json.Unmarshal(calValue.([]byte), &data)
@@ -117,6 +144,9 @@ func (c *BeaconsHttpClientV1) DeleteBeaconById(correlationId string, beaconId st
 	calValue, calErr := c.CallCommand("delete_beacon_by_id", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
+	}
+	if (string)(calValue.([]byte)) == "null" {
+		return nil, nil
 	}
 	var data bdata.BeaconV1
 	convErr := json.Unmarshal(calValue.([]byte), &data)

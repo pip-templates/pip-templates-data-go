@@ -31,7 +31,7 @@ func (c *BeaconsController) SetReferences(references cref.IReferences) {
 	}
 }
 
-func (c *BeaconsController) getCommandSet() *ccomand.CommandSet {
+func (c *BeaconsController) GetCommandSet() *ccomand.CommandSet {
 	if c.commandSet == nil {
 		c.commandSet = NewBeaconsCommandSet(c)
 	}
@@ -63,7 +63,7 @@ func (c *BeaconsController) CalculatePosition(correlationId string, siteId strin
 		correlationId, cdata.NewFilterParamsFromTuples(
 			"site_id", siteId,
 			"udis", udis),
-		nil)
+		cdata.NewEmptyPagingParams())
 
 	if getErr != nil || page == nil {
 		return nil, getErr
@@ -85,9 +85,9 @@ func (c *BeaconsController) CalculatePosition(correlationId string, siteId strin
 	}
 
 	if count > 0 {
-		position.Type = "Point"
-		position.Lng = lng / (float32)(count)
-		position.Lat = lat / (float32)(count)
+		pos.Type = "Point"
+		pos.Lng = lng / (float32)(count)
+		pos.Lat = lat / (float32)(count)
 	}
 
 	return &pos, nil

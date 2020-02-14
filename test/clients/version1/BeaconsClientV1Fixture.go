@@ -1,225 +1,118 @@
 package test_clients
 
-// let _ = require('lodash');
-// let async = require('async');
-// let assert = require('chai').assert;
+import (
+	"testing"
 
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
+	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+	bclients "github.com/pip-templates/pip-templates-microservice-go/src/clients/version1"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+	"github.com/stretchr/testify/assert"
+)
 
-// import { BeaconV1 } from '../../../src/data/version1/BeaconV1';
-// import { BeaconTypeV1 } from '../../../src/data/version1/BeaconTypeV1';
-// import { IBeaconsClientV1 } from '../../../src/clients/version1/IBeaconsClientV1';
+type BeaconsClientV1Fixture struct {
+	Beacon1 bdata.BeaconV1
+	Beacon2 bdata.BeaconV1
+	Beacon3 bdata.BeaconV1
+	client  bclients.IBeaconsClientV1
+}
 
-// const BEACON1: BeaconV1 = {
-//     id: '1',
-//     udi: '00001',
-//     type: BeaconTypeV1.AltBeacon,
-//     site_id: '1',
-//     label: 'TestBeacon1',
-//     center: { type: 'Point', coordinates: [ 0, 0 ] },
-//     radius: 50
-// };
-// const BEACON2: BeaconV1 = {
-//     id: '2',
-//     udi: '00002',
-//     type: BeaconTypeV1.iBeacon,
-//     site_id: '1',
-//     label: 'TestBeacon2',
-//     center: { type: 'Point', coordinates: [ 2, 2 ] },
-//     radius: 70
-// };
+func NewBeaconsClientV1Fixture(client bclients.IBeaconsClientV1) *BeaconsClientV1Fixture {
+	bcf := BeaconsClientV1Fixture{}
+	bcf.Beacon1 = bdata.BeaconV1{
+		Id:      "1",
+		Udi:     "00001",
+		Type:    bdata.BeaconTypeV1.AltBeacon,
+		Site_id: "1",
+		Label:   "TestBeacon1",
+		Center:  bdata.GeoPointV1{Type: "Point", Lat: 0, Lng: 0},
+		Radius:  50,
+	}
+	bcf.Beacon2 = bdata.BeaconV1{
+		Id:      "2",
+		Udi:     "00002",
+		Type:    bdata.BeaconTypeV1.IBeacon,
+		Site_id: "1",
+		Label:   "TestBeacon2",
+		Center:  bdata.GeoPointV1{Type: "Point", Lat: 2, Lng: 2},
+		Radius:  70,
+	}
+	bcf.client = client
+	return &bcf
+}
 
-// export class BeaconsClientV1Fixture {
-//     private _client: IBeaconsClientV1;
+func (c *BeaconsClientV1Fixture) testCreateBeacons(t *testing.T) {
 
-//     public constructor(client: IBeaconsClientV1) {
-//         assert.isNotNull(client);
-//         this._client = client;
-//     }
+	// Create the first beacon
+	beacon, err := c.client.CreateBeacon("", c.Beacon1)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, c.Beacon1.Udi, beacon.Udi)
+	assert.Equal(t, c.Beacon1.Site_id, beacon.Site_id)
+	assert.Equal(t, c.Beacon1.Type, beacon.Type)
+	assert.Equal(t, c.Beacon1.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-//     public testCrudOperations(done) {
-//         let beacon1: BeaconV1;
+	// Create the second beacon
+	beacon, err = c.client.CreateBeacon("", c.Beacon2)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, c.Beacon2.Udi, beacon.Udi)
+	assert.Equal(t, c.Beacon2.Site_id, beacon.Site_id)
+	assert.Equal(t, c.Beacon2.Type, beacon.Type)
+	assert.Equal(t, c.Beacon2.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
+}
 
-//         async.series([
-//             // Create the first beacon
-//             (callback) => {
-//                 this._client.createBeacon(
-//                     null,
-//                     BEACON1,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
+func (c *BeaconsClientV1Fixture) TestCrudOperations(t *testing.T) {
+	var beacon1 bdata.BeaconV1
 
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON1.udi, beacon.udi);
-//                         assert.equal(BEACON1.site_id, beacon.site_id);
-//                         assert.equal(BEACON1.type, beacon.type);
-//                         assert.equal(BEACON1.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
+	// Create items
+	c.testCreateBeacons(t)
 
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Create the second beacon
-//             (callback) => {
-//                 this._client.createBeacon(
-//                     null,
-//                     BEACON2,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
+	// Get all beacons
+	page, err := c.client.GetBeacons("", cdata.NewEmptyFilterParams(), cdata.NewEmptyPagingParams())
+	assert.Nil(t, err)
+	assert.NotNil(t, page)
+	assert.Len(t, page.Data, 2)
+	beacon1 = *page.Data[0]
 
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON2.udi, beacon.udi);
-//                         assert.equal(BEACON2.site_id, beacon.site_id);
-//                         assert.equal(BEACON2.type, beacon.type);
-//                         assert.equal(BEACON2.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
+	// Update the beacon
+	beacon1.Label = "ABC"
+	beacon, err := c.client.UpdateBeacon("", beacon1)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
+	assert.Equal(t, "ABC", beacon.Label)
 
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Get all beacons
-//             (callback) => {
-//                 this._client.getBeacons(
-//                     null,
-//                     new FilterParams(),
-//                     new PagingParams(),
-//                     (err, page) => {
-//                         assert.isNull(err);
+	// Get beacon by udi
+	beacon, err = c.client.GetBeaconByUdi("", beacon1.Udi)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
 
-//                         assert.isObject(page);
-//                         assert.lengthOf(page.data, 2);
+	// Delete the beacon
+	beacon, err = c.client.DeleteBeaconById("", beacon1.Id)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
 
-//                         beacon1 = page.data[0];
+	// Try to get deleted beacon
+	beacon, err = c.client.GetBeaconById("", beacon1.Id)
+	assert.Nil(t, err)
+	assert.Nil(t, beacon)
+}
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Update the beacon
-//             (callback) => {
-//                 beacon1.label = 'ABC';
+func (c *BeaconsClientV1Fixture) TestCalculatePosition(t *testing.T) {
 
-//                 this._client.updateBeacon(
-//                     null,
-//                     beacon1,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
+	// Create items
+	c.testCreateBeacons(t)
 
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
-//                         assert.equal('ABC', beacon.label);
+	// Calculate position for one beacon
+	position, err := c.client.CalculatePosition("", "1", []string{"00001"})
+	assert.Nil(t, err)
+	assert.NotNil(t, position)
+	assert.Equal(t, "Point", position.Type)
+	assert.Equal(t, (float32)(0), position.Lat)
+	assert.Equal(t, (float32)(0), position.Lng)
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Get beacon by udi
-//             (callback) => {
-//                 this._client.getBeaconByUdi(
-//                     null,
-//                     beacon1.udi,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
-
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Delete the beacon
-//             (callback) => {
-//                 this._client.deleteBeaconById(
-//                     null,
-//                     beacon1.id,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
-
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Try to get deleted beacon
-//             (callback) => {
-//                 this._client.getBeaconById(
-//                     null,
-//                     beacon1.id,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
-
-//                         assert.isNull(beacon || null);
-
-//                         callback();
-//                     }
-//                 )
-//             }
-//         ], done);
-//     }
-
-//     public testCalculatePosition(done) {
-//         async.series([
-//             // Create the first beacon
-//             (callback) => {
-//                 this._client.createBeacon(
-//                     null,
-//                     BEACON1,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON1.udi, beacon.udi);
-//                         assert.equal(BEACON1.site_id, beacon.site_id);
-//                         assert.equal(BEACON1.type, beacon.type);
-//                         assert.equal(BEACON1.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
-
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Create the second beacon
-//             (callback) => {
-//                 this._client.createBeacon(
-//                     null,
-//                     BEACON2,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON2.udi, beacon.udi);
-//                         assert.equal(BEACON2.site_id, beacon.site_id);
-//                         assert.equal(BEACON2.type, beacon.type);
-//                         assert.equal(BEACON2.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
-
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Calculate position for one beacon
-//             (callback) => {
-//                 this._client.calculatePosition(
-//                     null, '1', ['00001'],
-//                     (err, position) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(position);
-//                         assert.equal('Point', position.type);
-//                         assert.lengthOf(position.coordinates, 2);
-//                         assert.equal(0, position.coordinates[0]);
-//                         assert.equal(0, position.coordinates[1]);
-
-//                         callback();
-//                     }
-//                 )
-//             }
-//         ], done);
-//     }
-// }
+}

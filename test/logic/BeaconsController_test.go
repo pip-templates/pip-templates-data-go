@@ -1,263 +1,155 @@
 package test_logic
 
-// let _ = require('lodash');
-// let async = require('async');
-// let assert = require('chai').assert;
+import (
+	"testing"
 
-// import { ConfigParams } from 'pip-services3-commons-node';
-// import { Descriptor } from 'pip-services3-commons-node';
-// import { References } from 'pip-services3-commons-node';
-// import { FilterParams } from 'pip-services3-commons-node';
-// import { PagingParams } from 'pip-services3-commons-node';
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
+	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
+	blogic "github.com/pip-templates/pip-templates-microservice-go/src/logic"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	"github.com/stretchr/testify/assert"
+)
 
-// import { BeaconV1 } from '../../src/data/version1/BeaconV1';
-// import { BeaconTypeV1 } from '../../src/data/version1/BeaconTypeV1';
-// import { BeaconsMemoryPersistence } from '../../src/persistence/BeaconsMemoryPersistence';
-// import { BeaconsController } from '../../src/logic/BeaconsController';
+var Beacon1 bdata.BeaconV1 = bdata.BeaconV1{
+	Id:      "1",
+	Udi:     "00001",
+	Type:    bdata.BeaconTypeV1.AltBeacon,
+	Site_id: "1",
+	Label:   "TestBeacon1",
+	Center:  bdata.GeoPointV1{Type: "Point", Lat: 0, Lng: 0},
+	Radius:  50,
+}
 
-// const BEACON1: BeaconV1 = {
-//     id: '1',
-//     udi: '00001',
-//     type: BeaconTypeV1.AltBeacon,
-//     site_id: '1',
-//     label: 'TestBeacon1',
-//     center: { type: 'Point', coordinates: [ 0, 0 ] },
-//     radius: 50
-// };
-// const BEACON2: BeaconV1 = {
-//     id: '2',
-//     udi: '00002',
-//     type: BeaconTypeV1.iBeacon,
-//     site_id: '1',
-//     label: 'TestBeacon2',
-//     center: { type: 'Point', coordinates: [ 2, 2 ] },
-//     radius: 70
-// };
+var Beacon2 bdata.BeaconV1 = bdata.BeaconV1{
+	Id:      "2",
+	Udi:     "00002",
+	Type:    bdata.BeaconTypeV1.IBeacon,
+	Site_id: "1",
+	Label:   "TestBeacon2",
+	Center:  bdata.GeoPointV1{Type: "Point", Lat: 2, Lng: 2},
+	Radius:  70,
+}
 
-// suite('BeaconsController', () => {
-//     let persistence: BeaconsMemoryPersistence;
-//     let controller: BeaconsController;
+var persistence *bpersist.BeaconsMemoryPersistence
+var controller *blogic.BeaconsController
 
-//     setup((done) => {
-//         persistence = new BeaconsMemoryPersistence();
-//         persistence.configure(new ConfigParams());
+func TestBeaconsController(t *testing.T) {
 
-//         controller = new BeaconsController();
-//         controller.configure(new ConfigParams());
+	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence.Configure(cconf.NewEmptyConfigParams())
 
-//         let references = References.fromTuples(
-//             new Descriptor('beacons', 'persistence', 'memory', 'default', '1.0'), persistence,
-//             new Descriptor('beacons', 'controller', 'default', 'default', '1.0'), controller
-//         );
+	controller = blogic.NewBeaconsController()
+	controller.Configure(cconf.NewEmptyConfigParams())
 
-//         controller.setReferences(references);
+	references := cref.NewReferencesFromTuples(
+		cref.NewDescriptor("beacons", "persistence", "memory", "default", "1.0"), persistence,
+		cref.NewDescriptor("beacons", "controller", "default", "default", "1.0"), controller,
+	)
 
-//         persistence.open(null, done);
-//     });
+	controller.SetReferences(references)
 
-//     teardown((done) => {
-//         persistence.close(null, done);
-//     });
+	persistence.Open("")
 
-//     test('CRUD Operations', (done) => {
-//         let beacon1: BeaconV1;
+	defer persistence.Close("")
 
-//         async.series([
-//             // Create the first beacon
-//             (callback) => {
-//                 controller.createBeacon(
-//                     null,
-//                     BEACON1,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
+	t.Run("BeaconsController:CRUD Operations", CrudOperations)
+	persistence.Clear("")
+	t.Run("BeaconsController:Calculate Positions", CalculatePositions)
+}
 
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON1.udi, beacon.udi);
-//                         assert.equal(BEACON1.site_id, beacon.site_id);
-//                         assert.equal(BEACON1.type, beacon.type);
-//                         assert.equal(BEACON1.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
+func CrudOperations(t *testing.T) {
+	var beacon1 bdata.BeaconV1
 
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Create the second beacon
-//             (callback) => {
-//                 controller.createBeacon(
-//                     null,
-//                     BEACON2,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
+	// Create the first beacon
+	beacon, err := controller.CreateBeacon("", Beacon1)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon1.Udi, beacon.Udi)
+	assert.Equal(t, Beacon1.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon1.Type, beacon.Type)
+	assert.Equal(t, Beacon1.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON2.udi, beacon.udi);
-//                         assert.equal(BEACON2.site_id, beacon.site_id);
-//                         assert.equal(BEACON2.type, beacon.type);
-//                         assert.equal(BEACON2.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
+	// Create the second beacon
+	beacon, err = controller.CreateBeacon("", Beacon2)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon2.Udi, beacon.Udi)
+	assert.Equal(t, Beacon2.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon2.Type, beacon.Type)
+	assert.Equal(t, Beacon2.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Get all beacons
-//             (callback) => {
-//                 controller.getBeacons(
-//                     null,
-//                     new FilterParams(),
-//                     new PagingParams(),
-//                     (err, page) => {
-//                         assert.isNull(err);
+	// Get all beacons
+	page, err := controller.GetBeacons("", cdata.NewEmptyFilterParams(), cdata.NewEmptyPagingParams())
+	assert.Nil(t, err)
+	assert.NotNil(t, page)
+	assert.Len(t, page.Data, 2)
+	beacon1 = *page.Data[0]
 
-//                         assert.isObject(page);
-//                         assert.lengthOf(page.data, 2);
+	// Update the beacon
+	beacon1.Label = "ABC"
+	beacon, err = controller.UpdateBeacon("", beacon1)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
+	assert.Equal(t, "ABC", beacon.Label)
 
-//                         beacon1 = page.data[0];
+	// Get beacon by udi
+	beacon, err = controller.GetBeaconByUdi("", beacon1.Udi)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Update the beacon
-//             (callback) => {
-//                 beacon1.label = 'ABC';
+	// Delete the beacon
+	beacon, err = controller.DeleteBeaconById("", beacon1.Id)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, beacon1.Id, beacon.Id)
 
-//                 controller.updateBeacon(
-//                     null,
-//                     beacon1,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
+	// Try to get deleted beacon
+	beacon, err = controller.GetBeaconById("", beacon1.Id)
+	assert.Nil(t, err)
+	assert.Nil(t, beacon)
+}
 
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
-//                         assert.equal('ABC', beacon.label);
+func CalculatePositions(t *testing.T) {
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Get beacon by udi
-//             (callback) => {
-//                 controller.getBeaconByUdi(
-//                     null,
-//                     beacon1.udi,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
+	// Create the first beacon
+	beacon, err := controller.CreateBeacon("", Beacon1)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon1.Udi, beacon.Udi)
+	assert.Equal(t, Beacon1.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon1.Type, beacon.Type)
+	assert.Equal(t, Beacon1.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
+	// Create the second beacon
+	beacon, err = controller.CreateBeacon("", Beacon2)
+	assert.Nil(t, err)
+	assert.NotNil(t, beacon)
+	assert.Equal(t, Beacon2.Udi, beacon.Udi)
+	assert.Equal(t, Beacon2.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon2.Type, beacon.Type)
+	assert.Equal(t, Beacon2.Label, beacon.Label)
+	assert.NotNil(t, beacon.Center)
 
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Delete the beacon
-//             (callback) => {
-//                 controller.deleteBeaconById(
-//                     null,
-//                     beacon1.id,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
+	// Calculate position for one beacon
+	position, err := controller.CalculatePosition("", "1", []string{"00001"})
+	assert.Nil(t, err)
+	assert.NotNil(t, position)
+	assert.Equal(t, "Point", position.Type)
+	assert.Equal(t, (float32)(0.0), position.Lat)
+	assert.Equal(t, (float32)(0.0), position.Lng)
 
-//                         assert.isObject(beacon);
-//                         assert.equal(beacon1.id, beacon.id);
-
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Try to get deleted beacon
-//             (callback) => {
-//                 controller.getBeaconById(
-//                     null,
-//                     beacon1.id,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
-
-//                         assert.isNull(beacon || null);
-
-//                         callback();
-//                     }
-//                 )
-//             }
-//         ], done);
-//     });
-
-//     test('Calculate Positions', (done) => {
-//         async.series([
-//             // Create the first beacon
-//             (callback) => {
-//                 controller.createBeacon(
-//                     null,
-//                     BEACON1,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON1.udi, beacon.udi);
-//                         assert.equal(BEACON1.site_id, beacon.site_id);
-//                         assert.equal(BEACON1.type, beacon.type);
-//                         assert.equal(BEACON1.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
-
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Create the second beacon
-//             (callback) => {
-//                 controller.createBeacon(
-//                     null,
-//                     BEACON2,
-//                     (err, beacon) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(beacon);
-//                         assert.equal(BEACON2.udi, beacon.udi);
-//                         assert.equal(BEACON2.site_id, beacon.site_id);
-//                         assert.equal(BEACON2.type, beacon.type);
-//                         assert.equal(BEACON2.label, beacon.label);
-//                         assert.isNotNull(beacon.center);
-
-//                         callback();
-//                     }
-//                 );
-//             },
-//             // Calculate position for one beacon
-//             (callback) => {
-//                 controller.calculatePosition(
-//                     null, '1', ['00001'],
-//                     (err, position) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(position);
-//                         assert.equal('Point', position.type);
-//                         assert.lengthOf(position.coordinates, 2);
-//                         assert.equal(0, position.coordinates[0]);
-//                         assert.equal(0, position.coordinates[1]);
-
-//                         callback();
-//                     }
-//                 )
-//             },
-//             // Calculate position for two beacons
-//             (callback) => {
-//                 controller.calculatePosition(
-//                     null, '1', ['00001', '00002'],
-//                     (err, position) => {
-//                         assert.isNull(err);
-
-//                         assert.isObject(position);
-//                         assert.equal('Point', position.type);
-//                         assert.lengthOf(position.coordinates, 2);
-//                         assert.equal(1, position.coordinates[0]);
-//                         assert.equal(1, position.coordinates[1]);
-
-//                         callback();
-//                     }
-//                 )
-//             }
-//         ], done);
-//     });
-// });
+	// Calculate position for two beacons
+	position, err = controller.CalculatePosition("", "1", []string{"00001", "00002"})
+	assert.Nil(t, err)
+	assert.NotNil(t, position)
+	assert.Equal(t, "Point", position.Type)
+	assert.Equal(t, (float32)(1.0), position.Lat)
+	assert.Equal(t, (float32)(1.0), position.Lng)
+}

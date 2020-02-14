@@ -1,84 +1,72 @@
 package test_clients
 
-// import { ConfigParams } from 'pip-services3-commons-node';
-// import { Descriptor } from 'pip-services3-commons-node';
-// import { References } from 'pip-services3-commons-node';
+import (
+	"testing"
 
-// import { BeaconsMemoryPersistence } from '../../../src/persistence/BeaconsMemoryPersistence';
-// import { BeaconsController } from '../../../src/logic/BeaconsController';
-// import { BeaconsHttpServiceV1 } from '../../../src/services/version1/BeaconsHttpServiceV1';
-// import { BeaconsHttpClientV1 } from '../../../src/clients/version1/BeaconsHttpClientV1';
-// import { BeaconsClientV1Fixture } from './BeaconsClientV1Fixture';
+	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
+	bclients "github.com/pip-templates/pip-templates-microservice-go/src/clients/version1"
+	blogic "github.com/pip-templates/pip-templates-microservice-go/src/logic"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	bservices "github.com/pip-templates/pip-templates-microservice-go/src/services/version1"
+)
 
-// suite('BeaconsHttpClientV1', () => {
-//     let persistence: BeaconsMemoryPersistence;
-//     let controller: BeaconsController;
-//     let service: BeaconsHttpServiceV1;
-//     let client: BeaconsHttpClientV1;
-//     let fixture: BeaconsClientV1Fixture;
+func TestBeaconsHttpClientV1(t *testing.T) {
 
-//     setup((done) => {
-//         persistence = new BeaconsMemoryPersistence();
-//         persistence.configure(new ConfigParams());
+	var persistence *bpersist.BeaconsMemoryPersistence
+	var controller *blogic.BeaconsController
+	var service *bservices.BeaconsHttpServiceV1
+	var client *bclients.BeaconsHttpClientV1
+	var fixture *BeaconsClientV1Fixture
 
-//         controller = new BeaconsController();
-//         controller.configure(new ConfigParams());
+	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence.Configure(cconf.NewEmptyConfigParams())
 
-//         let httpConfig = ConfigParams.fromTuples(
-//             'connection.protocol', 'http',
-//             'connection.port', 3000,
-//             'connection.host', 'localhost'
-//         );
+	controller = blogic.NewBeaconsController()
+	controller.Configure(cconf.NewEmptyConfigParams())
 
-//         service = new BeaconsHttpServiceV1();
-//         service.configure(httpConfig);
+	httpConfig := cconf.NewConfigParamsFromTuples(
+		"connection.protocol", "http",
+		"connection.port", "3000",
+		"connection.host", "localhost",
+	)
 
-//         client = new BeaconsHttpClientV1();
-//         client.configure(httpConfig);
+	service = bservices.NewBeaconsHttpServiceV1()
+	service.Configure(httpConfig)
 
-//         let references = References.fromTuples(
-//             new Descriptor('beacons', 'persistence', 'memory', 'default', '1.0'), persistence,
-//             new Descriptor('beacons', 'controller', 'default', 'default', '1.0'), controller,
-//             new Descriptor('beacons', 'service', 'http', 'default', '1.0'), service,
-//             new Descriptor('beacons', 'client', 'http', 'default', '1.0'), client
-//         );
-//         controller.setReferences(references);
-//         service.setReferences(references);
-//         client.setReferences(references);
+	client = bclients.NewBeaconsHttpClientV1()
+	client.Configure(httpConfig)
 
-//         fixture = new BeaconsClientV1Fixture(client);
+	references := cref.NewReferencesFromTuples(
+		cref.NewDescriptor("beacons", "persistence", "memory", "default", "1.0"), persistence,
+		cref.NewDescriptor("beacons", "controller", "default", "default", "1.0"), controller,
+		cref.NewDescriptor("beacons", "service", "http", "default", "1.0"), service,
+		cref.NewDescriptor("beacons", "client", "http", "default", "1.0"), client,
+	)
+	controller.SetReferences(references)
+	service.SetReferences(references)
+	client.SetReferences(references)
 
-//         persistence.open(null, (err) => {
-//             if (err) {
-//                 done(err);
-//                 return;
-//             }
+	fixture = NewBeaconsClientV1Fixture(client)
 
-//             service.open(null, (err) => {
-//                 if (err) {
-//                     done(err);
-//                     return;
-//                 }
+	opnErr := persistence.Open("")
+	if opnErr != nil {
+		panic("TestBeaconsHttpClientV1:Error open persistence!")
+	}
 
-//                 client.open(null, done);
-//             });
-//         });
-//     });
+	opnErr = service.Open("")
+	if opnErr != nil {
+		panic("TestBeaconsHttpClientV1:Error open service!")
+	}
 
-//     teardown((done) => {
-//         client.close(null, (err) => {
-//             service.close(null, (err) => {
-//                 persistence.close(null, done);
-//             });
-//         });
-//     });
+	client.Open("")
 
-//     test('CRUD Operations', (done) => {
-//         fixture.testCrudOperations(done);
-//     });
+	defer client.Close("")
+	defer service.Close("")
+	defer persistence.Close("")
 
-//     test('Calculate Position', (done) => {
-//         fixture.testCalculatePosition(done);
-//     });
+	t.Run("BeaconsHttpClientV1:CRUD Operations", fixture.TestCrudOperations)
+	persistence.Clear("")
+	t.Run("BeaconsHttpClientV1:1Calculate Positions", fixture.TestCalculatePosition)
 
-// });
+}

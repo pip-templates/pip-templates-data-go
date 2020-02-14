@@ -72,7 +72,7 @@ func (c *BeaconsCommandSet) makeCalculatePositionCommand() ccomand.ICommand {
 		"calculate_position",
 		cvalid.NewObjectSchema().
 			WithRequiredProperty("site_id", cconv.String).
-			WithRequiredProperty("udis", cvalid.NewArraySchema(cconv.String)),
+			WithRequiredProperty("udis", cvalid.NewArraySchema(cconv.String)), //cconv.String),
 		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
 			siteId := args.GetAsString("site_id")
 			udis := args.GetAsString("udis")

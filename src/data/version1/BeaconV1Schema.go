@@ -18,7 +18,7 @@ func NewBeaconV1Schema() *BeaconV1Schema {
 	bs.WithOptionalProperty("type", cconv.String)
 	bs.WithRequiredProperty("udi", cconv.String)
 	bs.WithOptionalProperty("label", cconv.String)
-	bs.WithOptionalProperty("center", nil)
-	bs.WithOptionalProperty("radius", cconv.Float)
+	bs.WithOptionalProperty("center", cconv.Map)
+	bs.WithOptionalProperty("radius", cconv.Double)
 	return &bs
 }
