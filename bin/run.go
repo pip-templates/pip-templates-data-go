@@ -1,9 +1,14 @@
-let BeaconsProcess = require('../obj/src/container/BeaconsProcess').BeaconsProcess;
+package main
 
-try {
-    let proc = new BeaconsProcess();
-    proc._configPath = "./config/config.yml";
-    proc.run(process.argv);
-} catch (ex) {
-    console.error(ex);
+import (
+	"os"
+
+	bproc "github.com/pip-templates/pip-templates-microservice-go/src/container"
+)
+
+func main() {
+	proc := bproc.NewBeaconsProcess()
+	proc.SetConfigPath("./config/config.yml")
+	proc.Run(os.Args)
+
 }
