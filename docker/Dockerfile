@@ -1,13 +1,10 @@
-FROM node:8
+FROM golang:1.13
 
 # set working directory
 WORKDIR /app
 
-# Copy project file
-COPY package*.json ./
-
-# install ALL node_modules, including 'devDependencies'
-RUN npm install
+# install ALL go_modules
+RUN go get -u
 
 # copy all project
 COPY . .
@@ -18,4 +15,6 @@ ENV MONGO_SERVICE_PORT=27017
 
 EXPOSE "8080:8080"
 
-CMD [ "node", "bin/run.js" ]
+RUN go install ./bin/run.go
+
+CMD [ "app" ]

@@ -75,6 +75,8 @@ github.com/pip-services3-go/pip-services3-data-go v1.0.1 h1:p9egUgg6CJ/viDH+QQ+W
 github.com/pip-services3-go/pip-services3-data-go v1.0.1/go.mod h1:GlF516tSRHiEpQP5370Ttzl7eUEvH5B53xRS6/3r0cQ=
 github.com/pip-services3-go/pip-services3-data-go v1.0.2 h1:VyVXK5p4YEeWZjO7VIbgkFgzjaNgQv2YrmXw23k4DEY=
 github.com/pip-services3-go/pip-services3-data-go v1.0.2/go.mod h1:GlF516tSRHiEpQP5370Ttzl7eUEvH5B53xRS6/3r0cQ=
+github.com/pip-services3-go/pip-services3-data-go v1.0.3 h1:n8eYvSAD8cnppZboh/bH1EzylDksEqFpZ8vOzB2PhlA=
+github.com/pip-services3-go/pip-services3-data-go v1.0.3/go.mod h1:GlF516tSRHiEpQP5370Ttzl7eUEvH5B53xRS6/3r0cQ=
 github.com/pip-services3-go/pip-services3-mongodb-go v1.0.1 h1:XJzSqP5d7OG55wTkxR8Ii/Ib06/8TvpRKhNtq62FAuI=
 github.com/pip-services3-go/pip-services3-mongodb-go v1.0.1/go.mod h1:/ki8gPBzw/TYm3wSVc1ktQbUVTPmScBzn2e2qknOljg=
 github.com/pip-services3-go/pip-services3-rpc-go v0.0.0-20200211104825-de9f1d2d6a12 h1:dAuekUQ7KneF7o3pZWdsfHYqni9yy+00bw00bnYFOUg=
