@@ -4,10 +4,14 @@ FROM golang:1.13
 WORKDIR /app
 
 # install ALL go_modules
-RUN go get -u
+COPY go.mod go.sum ./
+RUN go mod download
 
 # copy all project
 COPY . .
+
+# build project
+RUN go build -o app ./bin
 
 ENV HTTP_PORT=8080
 ENV MONGO_SERVICE_HOST=
@@ -15,6 +19,4 @@ ENV MONGO_SERVICE_PORT=27017
 
 EXPOSE "8080:8080"
 
-RUN go install ./bin/run.go
-
-CMD [ "app" ]
+CMD [ "./app" ]
