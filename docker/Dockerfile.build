@@ -1,20 +1,16 @@
 FROM golang:1.13
 
-# Install development tools
-#RUN npm install typescript -g
-
 # set working directory
 WORKDIR /app
 
-# Copy project file
-#COPY package*.json ./
+# Copy package files
+COPY go.mod go.sum ./
 
 # install ALL go_modules
-#RUN npm install
-RUN go get -u
+RUN go mod download
 
 # copy all project
 COPY . .
 
-# compile source code
-RUN go build ./bin/run.go
+# build project
+RUN go build -o ./obj/app ./bin

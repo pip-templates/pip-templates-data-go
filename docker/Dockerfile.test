@@ -3,14 +3,13 @@ FROM golang:1.13
 # set working directory
 WORKDIR /app
 
-# Copy project file
-#COPY package*.json ./
+# copy package files
+COPY go.mod go.sum ./
 
-# install ALL node_modules, including 'devDependencies'
-#RUN npm install
-RUN go get -u
+# install ALL go_modules
+RUN go mod download
 
 # copy all project
 COPY . .
- 
+
 CMD go test -v ./test/...
