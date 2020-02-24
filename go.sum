@@ -67,6 +67,8 @@ github.com/pip-services3-go/pip-services3-commons-go v1.0.0/go.mod h1:a2fIaCl4TU
 github.com/pip-services3-go/pip-services3-components-go v0.0.0-20191121193353-fd649422216e/go.mod h1:HXw/ZY1ptv0WEICtazRu6ZeWjtmn90maApMBGfzRj8I=
 github.com/pip-services3-go/pip-services3-components-go v1.0.0 h1:v2aJdHYohzNg50jcCrWDmprYRvXwhMaKnDXhNo3WkgM=
 github.com/pip-services3-go/pip-services3-components-go v1.0.0/go.mod h1:Me/KFWw/xeMML89twlGdFKqnvprgt2qyi8xAV1+XKGs=
+github.com/pip-services3-go/pip-services3-components-go v1.0.2 h1:46jDnLU9f4H+vIUKyTGY5MqZiTK7gKYjF6xU3iXZcWI=
+github.com/pip-services3-go/pip-services3-components-go v1.0.2/go.mod h1:Me/KFWw/xeMML89twlGdFKqnvprgt2qyi8xAV1+XKGs=
 github.com/pip-services3-go/pip-services3-container-go v0.0.0-20200206185336-b9a38446c547 h1:Izeu7nh9kwRAHBg+vJ8Ba0m0TAw1usZ1sSjYyrul6cU=
 github.com/pip-services3-go/pip-services3-container-go v0.0.0-20200206185336-b9a38446c547/go.mod h1:yqrwtpt/3RFWTswphiY+RCXuokcFCqtVyAKRGGwBD5E=
 github.com/pip-services3-go/pip-services3-data-go v1.0.0 h1:hyk/bMtzxVlZuhSUYMIj9kEW+CXJ28gYpsq9Q+rK6lk=
@@ -81,6 +83,8 @@ github.com/pip-services3-go/pip-services3-mongodb-go v1.0.1 h1:XJzSqP5d7OG55wTkx
 github.com/pip-services3-go/pip-services3-mongodb-go v1.0.1/go.mod h1:/ki8gPBzw/TYm3wSVc1ktQbUVTPmScBzn2e2qknOljg=
 github.com/pip-services3-go/pip-services3-rpc-go v0.0.0-20200211104825-de9f1d2d6a12 h1:dAuekUQ7KneF7o3pZWdsfHYqni9yy+00bw00bnYFOUg=
 github.com/pip-services3-go/pip-services3-rpc-go v0.0.0-20200211104825-de9f1d2d6a12/go.mod h1:boD+x5t7ft4JOTVpHwrn1hz2mQng/zvo9lnLqeE/oPg=
+github.com/pip-services3-go/pip-services3-rpc-go v0.0.0-20200221155527-a4e345ba6290 h1:NwF7KrLCUVIVwFwi1nalqcXYxYNYjWoOLsTBhwiQbA4=
+github.com/pip-services3-go/pip-services3-rpc-go v0.0.0-20200221155527-a4e345ba6290/go.mod h1:boD+x5t7ft4JOTVpHwrn1hz2mQng/zvo9lnLqeE/oPg=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
@@ -104,6 +108,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
+github.com/stretchr/testify v1.5.1 h1:nOGnQDM7FYENwehXlg/kFVnos3rEvtKTjRvOWSzb6H4=
+github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
 github.com/tidwall/pretty v1.0.0 h1:HsD+QiTn7sK6flMKIvNmpqz1qrpP3Ps6jOKIKMooyg4=
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
 github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c h1:u40Z8hqBAAQyv+vATcGgV0YCnDjqSL7/q/JyPhhJSPk=

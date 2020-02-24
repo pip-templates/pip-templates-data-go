@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 )
 
 func TestBeaconsMemoryPersistence(t *testing.T) {

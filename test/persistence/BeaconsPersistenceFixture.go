@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
-	bdata "github.com/pip-templates/pip-templates-microservice-go/src/data/version1"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 	"github.com/stretchr/testify/assert"
 )
 

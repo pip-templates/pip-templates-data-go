@@ -2,6 +2,6 @@ npm-debug.log*
 /.idea
 /node_modules
 /dist
-/obj/test
+/obj
 /data/*.json
 /.vscode

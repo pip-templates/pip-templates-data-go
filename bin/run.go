@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	bproc "github.com/pip-templates/pip-templates-microservice-go/src/container"
+	bproc "github.com/pip-templates/pip-templates-microservice-go/container"
 )
 
 func main() {

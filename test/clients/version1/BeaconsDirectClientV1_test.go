@@ -5,9 +5,9 @@ import (
 
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
-	bclients "github.com/pip-templates/pip-templates-microservice-go/src/clients/version1"
-	blogic "github.com/pip-templates/pip-templates-microservice-go/src/logic"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/src/persistence"
+	bclients "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
+	blogic "github.com/pip-templates/pip-templates-microservice-go/logic"
+	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 )
 
 func TestBeaconsDirectClientV1(t *testing.T) {
