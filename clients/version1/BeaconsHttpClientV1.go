@@ -8,6 +8,12 @@ import (
 	bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 )
 
+var (
+	beaconV1DataPageType = reflect.TypeOf(&bdata.BeaconV1DataPage{})
+	beaconV1Type         = reflect.TypeOf(&bdata.BeaconV1{})
+	geoPointV1Type       = reflect.TypeOf(&bdata.GeoPointV1{})
+)
+
 type BeaconsHttpClientV1 struct {
 	rpcclient.CommandableHttpClient
 }
@@ -22,37 +28,33 @@ func (c *BeaconsHttpClientV1) GetBeacons(correlationId string, filter *cdata.Fil
 	params := cdata.NewEmptyStringValueMap()
 	c.AddFilterParams(params, filter)
 	c.AddPagingParams(params, paging)
-	calValue, calErr := c.CallCommand("get_beacons", correlationId, params, nil)
+	calValue, calErr := c.CallCommand("get_beacons", correlationId, params, nil, beaconV1DataPageType)
 	if calErr != nil {
 		return nil, calErr
 	}
-
-	convRes, err := rpcclient.ConvertComandResult(calValue, reflect.TypeOf(&bdata.BeaconV1DataPage{}))
-	page, _ = convRes.(*bdata.BeaconV1DataPage)
+	page, _ = calValue.(*bdata.BeaconV1DataPage)
 	return page, err
 }
 
 func (c *BeaconsHttpClientV1) GetBeaconById(correlationId string, beaconId string) (beacon *bdata.BeaconV1, err error) {
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("beacon_id", beaconId)
-	calValue, calErr := c.CallCommand("get_beacon_by_id", correlationId, params, nil)
+	calValue, calErr := c.CallCommand("get_beacon_by_id", correlationId, params, nil, beaconV1Type)
 	if calErr != nil {
 		return nil, calErr
 	}
-	convRes, err := rpcclient.ConvertComandResult(calValue, reflect.TypeOf(&bdata.BeaconV1{}))
-	beacon, _ = convRes.(*bdata.BeaconV1)
+	beacon, _ = calValue.(*bdata.BeaconV1)
 	return beacon, err
 }
 
 func (c *BeaconsHttpClientV1) GetBeaconByUdi(correlationId string, udi string) (beacon *bdata.BeaconV1, err error) {
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("udi", udi)
-	calValue, calErr := c.CallCommand("get_beacon_by_udi", correlationId, params, nil)
+	calValue, calErr := c.CallCommand("get_beacon_by_udi", correlationId, params, nil, beaconV1Type)
 	if calErr != nil {
 		return nil, calErr
 	}
-	convRes, err := rpcclient.ConvertComandResult(calValue, reflect.TypeOf(&bdata.BeaconV1{}))
-	beacon, _ = convRes.(*bdata.BeaconV1)
+	beacon, _ = calValue.(*bdata.BeaconV1)
 	return beacon, err
 }
 
@@ -62,12 +64,11 @@ func (c *BeaconsHttpClientV1) CalculatePosition(correlationId string, siteId str
 	params["site_id"] = siteId
 	params["udis"] = udis
 
-	calValue, calErr := c.CallCommand("calculate_position", correlationId, nil, params)
+	calValue, calErr := c.CallCommand("calculate_position", correlationId, nil, params, geoPointV1Type)
 	if calErr != nil {
 		return nil, calErr
 	}
-	convRes, err := rpcclient.ConvertComandResult(calValue, reflect.TypeOf(&bdata.GeoPointV1{}))
-	position, _ = convRes.(*bdata.GeoPointV1)
+	position, _ = calValue.(*bdata.GeoPointV1)
 	return position, err
 }
 
@@ -76,12 +77,11 @@ func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon bdata.Be
 	params := make(map[string]interface{})
 	params["beacon"] = beacon
 
-	calValue, calErr := c.CallCommand("create_beacon", correlationId, nil, params)
+	calValue, calErr := c.CallCommand("create_beacon", correlationId, nil, params, beaconV1Type)
 	if calErr != nil {
 		return nil, calErr
 	}
-	convRes, err := rpcclient.ConvertComandResult(calValue, reflect.TypeOf(&bdata.BeaconV1{}))
-	res, _ = convRes.(*bdata.BeaconV1)
+	res, _ = calValue.(*bdata.BeaconV1)
 	return res, err
 }
 
@@ -90,12 +90,11 @@ func (c *BeaconsHttpClientV1) UpdateBeacon(correlationId string, beacon bdata.Be
 	params := make(map[string]interface{})
 	params["beacon"] = beacon
 
-	calValue, calErr := c.CallCommand("update_beacon", correlationId, nil, params)
+	calValue, calErr := c.CallCommand("update_beacon", correlationId, nil, params, beaconV1Type)
 	if calErr != nil {
 		return nil, calErr
 	}
-	convRes, err := rpcclient.ConvertComandResult(calValue, reflect.TypeOf(&bdata.BeaconV1{}))
-	res, _ = convRes.(*bdata.BeaconV1)
+	res, _ = calValue.(*bdata.BeaconV1)
 	return res, err
 }
 
@@ -103,11 +102,10 @@ func (c *BeaconsHttpClientV1) DeleteBeaconById(correlationId string, beaconId st
 
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("beacon_id", beaconId)
-	calValue, calErr := c.CallCommand("delete_beacon_by_id", correlationId, params, nil)
+	calValue, calErr := c.CallCommand("delete_beacon_by_id", correlationId, params, nil, beaconV1Type)
 	if calErr != nil {
 		return nil, calErr
 	}
-	convRes, err := rpcclient.ConvertComandResult(calValue, reflect.TypeOf(&bdata.BeaconV1{}))
-	beacon, _ = convRes.(*bdata.BeaconV1)
+	beacon, _ = calValue.(*bdata.BeaconV1)
 	return beacon, err
 }
