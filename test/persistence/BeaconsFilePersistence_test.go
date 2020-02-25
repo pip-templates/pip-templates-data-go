@@ -11,7 +11,7 @@ func TestBeaconsFilePersistence(t *testing.T) {
 	var persistence *bpersist.BeaconsFilePersistence
 	var fixture *BeaconsPersistenceFixture
 
-	persistence = bpersist.NewBeaconsFilePersistence("../../persistence_data/beacons.test.json")
+	persistence = bpersist.NewBeaconsFilePersistence("../../temp/beacons.test.json")
 	persistence.Configure(cconf.NewEmptyConfigParams())
 	fixture = NewBeaconsPersistenceFixture(persistence)
 

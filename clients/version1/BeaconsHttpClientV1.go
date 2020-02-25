@@ -28,7 +28,7 @@ func (c *BeaconsHttpClientV1) GetBeacons(correlationId string, filter *cdata.Fil
 	params := cdata.NewEmptyStringValueMap()
 	c.AddFilterParams(params, filter)
 	c.AddPagingParams(params, paging)
-	calValue, calErr := c.CallCommand("get_beacons", correlationId, params, nil, beaconV1DataPageType)
+	calValue, calErr := c.CallCommand(beaconV1DataPageType, "get_beacons", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -39,7 +39,7 @@ func (c *BeaconsHttpClientV1) GetBeacons(correlationId string, filter *cdata.Fil
 func (c *BeaconsHttpClientV1) GetBeaconById(correlationId string, beaconId string) (beacon *bdata.BeaconV1, err error) {
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("beacon_id", beaconId)
-	calValue, calErr := c.CallCommand("get_beacon_by_id", correlationId, params, nil, beaconV1Type)
+	calValue, calErr := c.CallCommand(beaconV1Type, "get_beacon_by_id", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -50,7 +50,7 @@ func (c *BeaconsHttpClientV1) GetBeaconById(correlationId string, beaconId strin
 func (c *BeaconsHttpClientV1) GetBeaconByUdi(correlationId string, udi string) (beacon *bdata.BeaconV1, err error) {
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("udi", udi)
-	calValue, calErr := c.CallCommand("get_beacon_by_udi", correlationId, params, nil, beaconV1Type)
+	calValue, calErr := c.CallCommand(beaconV1Type, "get_beacon_by_udi", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -64,7 +64,7 @@ func (c *BeaconsHttpClientV1) CalculatePosition(correlationId string, siteId str
 	params["site_id"] = siteId
 	params["udis"] = udis
 
-	calValue, calErr := c.CallCommand("calculate_position", correlationId, nil, params, geoPointV1Type)
+	calValue, calErr := c.CallCommand(geoPointV1Type, "calculate_position", correlationId, nil, params)
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -77,7 +77,7 @@ func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon bdata.Be
 	params := make(map[string]interface{})
 	params["beacon"] = beacon
 
-	calValue, calErr := c.CallCommand("create_beacon", correlationId, nil, params, beaconV1Type)
+	calValue, calErr := c.CallCommand(beaconV1Type, "create_beacon", correlationId, nil, params)
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -90,7 +90,7 @@ func (c *BeaconsHttpClientV1) UpdateBeacon(correlationId string, beacon bdata.Be
 	params := make(map[string]interface{})
 	params["beacon"] = beacon
 
-	calValue, calErr := c.CallCommand("update_beacon", correlationId, nil, params, beaconV1Type)
+	calValue, calErr := c.CallCommand(beaconV1Type, "update_beacon", correlationId, nil, params)
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -102,7 +102,7 @@ func (c *BeaconsHttpClientV1) DeleteBeaconById(correlationId string, beaconId st
 
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("beacon_id", beaconId)
-	calValue, calErr := c.CallCommand("delete_beacon_by_id", correlationId, params, nil, beaconV1Type)
+	calValue, calErr := c.CallCommand(beaconV1Type, "delete_beacon_by_id", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
 	}

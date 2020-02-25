@@ -5,3 +5,4 @@ npm-debug.log*
 /obj
 /data/*.json
 /.vscode
+/temp
