@@ -22,7 +22,7 @@ var Beacon1 bdata.BeaconV1 = bdata.BeaconV1{
 	Type:    bdata.BeaconTypeV1.AltBeacon,
 	Site_id: "1",
 	Label:   "TestBeacon1",
-	Center:  bdata.GeoPointV1{Type: "Point", Lat: 0, Lng: 0},
+	Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
 	Radius:  50,
 }
 
@@ -32,7 +32,7 @@ var Beacon2 bdata.BeaconV1 = bdata.BeaconV1{
 	Type:    bdata.BeaconTypeV1.IBeacon,
 	Site_id: "1",
 	Label:   "TestBeacon2",
-	Center:  bdata.GeoPointV1{Type: "Point", Lat: 2, Lng: 2},
+	Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
 	Radius:  70,
 }
 
@@ -176,8 +176,8 @@ func TestBeaconsHttpServiceV1(t *testing.T) {
 
 	assert.NotNil(t, position)
 	assert.Equal(t, "Point", position.Type)
-	assert.Equal(t, (float32)(0.0), position.Lat)
-	assert.Equal(t, (float32)(0.0), position.Lng)
+	assert.Equal(t, (float32)(0.0), position.Coordinates[0][0])
+	assert.Equal(t, (float32)(0.0), position.Coordinates[0][1])
 
 	// Delete the beacon
 	bodyMap = make(map[string]interface{})

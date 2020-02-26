@@ -51,7 +51,12 @@ func (c *BeaconsController) GetBeaconByUdi(correlationId string, beaconId string
 
 func (c *BeaconsController) CalculatePosition(correlationId string, siteId string, udis []string) (position *bdata.GeoPointV1, err error) {
 	beacons := make([]bdata.BeaconV1, 0, 0)
-	pos := bdata.GeoPointV1{}
+	pos := bdata.GeoPointV1{
+		Type:        "Point",
+		Coordinates: make([][]float32, 1, 1),
+	}
+
+	pos.Coordinates[0] = make([]float32, 2, 2)
 
 	if udis == nil || len(udis) == 0 {
 
@@ -77,16 +82,16 @@ func (c *BeaconsController) CalculatePosition(correlationId string, siteId strin
 
 	for _, beacon := range beacons {
 		if beacon.Center.Type == "Point" {
-			lng += beacon.Center.Lat
-			lat += beacon.Center.Lng
+			lng += beacon.Center.Coordinates[0][0]
+			lat += beacon.Center.Coordinates[0][1]
 			count += 1
 		}
 	}
 
 	if count > 0 {
 		pos.Type = "Point"
-		pos.Lng = lng / (float32)(count)
-		pos.Lat = lat / (float32)(count)
+		pos.Coordinates[0][0] = lng / (float32)(count)
+		pos.Coordinates[0][1] = lat / (float32)(count)
 	}
 
 	return &pos, nil

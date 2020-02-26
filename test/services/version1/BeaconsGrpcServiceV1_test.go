@@ -174,8 +174,8 @@ func TestBeaconsGrpcServiceV1(t *testing.T) {
 
 	assert.NotNil(t, position)
 	assert.Equal(t, "Point", position.Type)
-	assert.Equal(t, (float32)(0.0), position.Lat)
-	assert.Equal(t, (float32)(0.0), position.Lng)
+	assert.Equal(t, (float32)(0.0), position.Coordinates[0][0])
+	assert.Equal(t, (float32)(0.0), position.Coordinates[0][1])
 
 	// Delete the beacon
 	requestParams = make(map[string]interface{})

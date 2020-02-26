@@ -24,7 +24,7 @@ func NewBeaconsPersistenceFixture(persistence bpersist.IBeaconsPersistence) *Bea
 		Type:    bdata.BeaconTypeV1.AltBeacon,
 		Site_id: "1",
 		Label:   "TestBeacon1",
-		Center:  bdata.GeoPointV1{Type: "Point", Lat: 0, Lng: 0},
+		Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
 		Radius:  50,
 	}
 	bpf.Beacon2 = bdata.BeaconV1{
@@ -33,7 +33,7 @@ func NewBeaconsPersistenceFixture(persistence bpersist.IBeaconsPersistence) *Bea
 		Type:    bdata.BeaconTypeV1.IBeacon,
 		Site_id: "1",
 		Label:   "TestBeacon2",
-		Center:  bdata.GeoPointV1{Type: "Point", Lat: 2, Lng: 2},
+		Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
 		Radius:  70,
 	}
 	bpf.Beacon3 = bdata.BeaconV1{
@@ -42,7 +42,7 @@ func NewBeaconsPersistenceFixture(persistence bpersist.IBeaconsPersistence) *Bea
 		Type:    bdata.BeaconTypeV1.AltBeacon,
 		Site_id: "2",
 		Label:   "TestBeacon3",
-		Center:  bdata.GeoPointV1{Type: "Point", Lat: 10, Lng: 10},
+		Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{10.0, 10.0}}},
 		Radius:  50,
 	}
 	bpf.persistence = persistence
