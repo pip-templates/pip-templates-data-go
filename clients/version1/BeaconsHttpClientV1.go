@@ -15,19 +15,21 @@ var (
 )
 
 type BeaconsHttpClientV1 struct {
-	rpcclient.CommandableHttpClient
+	*rpcclient.CommandableHttpClient
 }
 
 func NewBeaconsHttpClientV1() *BeaconsHttpClientV1 {
 	bhc := BeaconsHttpClientV1{}
-	bhc.CommandableHttpClient = *rpcclient.NewCommandableHttpClient("v1/beacons")
+	bhc.CommandableHttpClient = rpcclient.NewCommandableHttpClient("v1/beacons")
 	return &bhc
 }
 
 func (c *BeaconsHttpClientV1) GetBeacons(correlationId string, filter *cdata.FilterParams, paging *cdata.PagingParams) (page *bdata.BeaconV1DataPage, err error) {
+
 	params := cdata.NewEmptyStringValueMap()
 	c.AddFilterParams(params, filter)
 	c.AddPagingParams(params, paging)
+
 	calValue, calErr := c.CallCommand(beaconV1DataPageType, "get_beacons", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
@@ -37,8 +39,10 @@ func (c *BeaconsHttpClientV1) GetBeacons(correlationId string, filter *cdata.Fil
 }
 
 func (c *BeaconsHttpClientV1) GetBeaconById(correlationId string, beaconId string) (beacon *bdata.BeaconV1, err error) {
+
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("beacon_id", beaconId)
+
 	calValue, calErr := c.CallCommand(beaconV1Type, "get_beacon_by_id", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
@@ -48,8 +52,10 @@ func (c *BeaconsHttpClientV1) GetBeaconById(correlationId string, beaconId strin
 }
 
 func (c *BeaconsHttpClientV1) GetBeaconByUdi(correlationId string, udi string) (beacon *bdata.BeaconV1, err error) {
+
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("udi", udi)
+
 	calValue, calErr := c.CallCommand(beaconV1Type, "get_beacon_by_udi", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr
@@ -102,6 +108,7 @@ func (c *BeaconsHttpClientV1) DeleteBeaconById(correlationId string, beaconId st
 
 	params := cdata.NewEmptyStringValueMap()
 	params.Put("beacon_id", beaconId)
+
 	calValue, calErr := c.CallCommand(beaconV1Type, "delete_beacon_by_id", correlationId, params, nil)
 	if calErr != nil {
 		return nil, calErr

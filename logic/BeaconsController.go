@@ -9,7 +9,6 @@ import (
 	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 )
 
-// implements IBeaconsController, IConfigurable, IReferenceable, ICommandable
 type BeaconsController struct {
 	persistence bpersist.IBeaconsPersistence
 	commandSet  *BeaconsCommandSet

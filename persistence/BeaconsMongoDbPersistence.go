@@ -20,7 +20,6 @@ func NewBeaconsMongoDbPersistence() *BeaconsMongoDbPersistence {
 	proto := reflect.TypeOf(&data.BeaconV1{})
 	bmp := BeaconsMongoDbPersistence{}
 	bmp.IdentifiableMongoDbPersistence = *mngpersist.NewIdentifiableMongoDbPersistence(proto, "beacons")
-	//bmp.MaxPageSize = 1000;
 	return &bmp
 }
 
@@ -33,23 +32,19 @@ func (c *BeaconsMongoDbPersistence) composeFilter(filter *cdata.FilterParams) in
 
 	id := filter.GetAsString("id")
 	if id != "" {
-		//criteria["_id"] = id
 		criteria = append(criteria, bson.M{"_id": id})
 	}
 
 	siteId := filter.GetAsString("site_id")
 	if siteId != "" {
-		//criteria["site_id"] = siteId
 		criteria = append(criteria, bson.M{"site_id": siteId})
 	}
 	label := filter.GetAsString("label")
 	if label != "" {
-		//criteria["label"] = label
 		criteria = append(criteria, bson.M{"label": label})
 	}
 	udi := filter.GetAsString("udi")
 	if udi != "" {
-		//criteria["udi"] = udi
 		criteria = append(criteria, bson.M{"udi": udi})
 	}
 
@@ -58,7 +53,6 @@ func (c *BeaconsMongoDbPersistence) composeFilter(filter *cdata.FilterParams) in
 	if udis != "" {
 		arrUdis = strings.Split(udis, ",")
 		if len(arrUdis) > 1 {
-			//criteria["udi"] = bson.D{{"$in", arrUdis}}
 			criteria = append(criteria, bson.M{"udi": bson.D{{"$in", arrUdis}}})
 		}
 	}

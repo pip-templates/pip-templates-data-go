@@ -36,12 +36,12 @@ var Beacon2 bdata.BeaconV1 = bdata.BeaconV1{
 	Radius:  70,
 }
 
-var persistence *bpersist.BeaconsMemoryPersistence
-var controller *blogic.BeaconsController
-var service *bservices.BeaconsHttpServiceV1
-var url string = "http://localhost:3000"
-
 func TestBeaconsHttpServiceV1(t *testing.T) {
+
+	var persistence *bpersist.BeaconsMemoryPersistence
+	var controller *blogic.BeaconsController
+	var service *bservices.BeaconsHttpServiceV1
+	var url string = "http://localhost:3000"
 
 	persistence = bpersist.NewBeaconsMemoryPersistence()
 	persistence.Configure(cconf.NewEmptyConfigParams())

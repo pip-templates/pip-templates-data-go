@@ -15,6 +15,7 @@ type BeaconsServiceFactory struct {
 	MongoDbPersistenceDescriptor *cref.Descriptor
 	ControllerDescriptor         *cref.Descriptor
 	HttpServiceV1Descriptor      *cref.Descriptor
+	GrpcServiceV1Descriptor      *cref.Descriptor
 }
 
 func NewBeaconsServiceFactory() *BeaconsServiceFactory {
@@ -27,11 +28,13 @@ func NewBeaconsServiceFactory() *BeaconsServiceFactory {
 	bsf.MongoDbPersistenceDescriptor = cref.NewDescriptor("beacons", "persistence", "mongodb", "*", "1.0")
 	bsf.ControllerDescriptor = cref.NewDescriptor("beacons", "controller", "default", "*", "1.0")
 	bsf.HttpServiceV1Descriptor = cref.NewDescriptor("beacons", "service", "http", "*", "1.0")
+	bsf.GrpcServiceV1Descriptor = cref.NewDescriptor("beacons", "service", "grpc", "*", "1.0")
 
 	bsf.RegisterType(bsf.MemoryPersistenceDescriptor, bpersist.NewBeaconsMemoryPersistence)
 	bsf.RegisterType(bsf.FilePersistenceDescriptor, bpersist.NewBeaconsFilePersistence)
 	bsf.RegisterType(bsf.MongoDbPersistenceDescriptor, bpersist.NewBeaconsMongoDbPersistence)
 	bsf.RegisterType(bsf.ControllerDescriptor, blogic.NewBeaconsController)
 	bsf.RegisterType(bsf.HttpServiceV1Descriptor, bservices.NewBeaconsHttpServiceV1)
+	bsf.RegisterType(bsf.GrpcServiceV1Descriptor, bservices.NewBeaconsGrpcServiceV1)
 	return &bsf
 }

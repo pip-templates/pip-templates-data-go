@@ -11,6 +11,7 @@ type BeaconsClientFactory struct {
 	NullClientDescriptor   *cref.Descriptor
 	DirectClientDescriptor *cref.Descriptor
 	HttpClientDescriptor   *cref.Descriptor
+	GrpcClientDescriptor   *cref.Descriptor
 }
 
 func NewBeaconsClientFactory() *BeaconsClientFactory {
@@ -21,9 +22,11 @@ func NewBeaconsClientFactory() *BeaconsClientFactory {
 	bcf.NullClientDescriptor = cref.NewDescriptor("beacons", "client", "null", "*", "1.0")
 	bcf.DirectClientDescriptor = cref.NewDescriptor("beacons", "client", "direct", "*", "1.0")
 	bcf.HttpClientDescriptor = cref.NewDescriptor("beacons", "client", "http", "*", "1.0")
+	bcf.GrpcClientDescriptor = cref.NewDescriptor("beacons", "client", "grpc", "*", "1.0")
 
 	bcf.RegisterType(bcf.NullClientDescriptor, bclients.NewBeaconsNullClientV1)
 	bcf.RegisterType(bcf.DirectClientDescriptor, bclients.NewBeaconsDirectClientV1)
 	bcf.RegisterType(bcf.HttpClientDescriptor, bclients.NewBeaconsHttpClientV1)
+	bcf.RegisterType(bcf.GrpcClientDescriptor, bclients.NewBeaconsGrpcClientV1)
 	return &bcf
 }

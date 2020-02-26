@@ -10,5 +10,4 @@ func main() {
 	proc := bproc.NewBeaconsProcess()
 	proc.SetConfigPath("./config/config.yml")
 	proc.Run(os.Args)
-
 }
