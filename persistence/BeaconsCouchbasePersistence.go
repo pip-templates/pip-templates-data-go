@@ -169,7 +169,7 @@ func (c *BeaconsCouchbasePersistence) GetOneByUdi(correlationId string, udi stri
 	jsonBuf, _ := json.Marshal(buf[c.BucketName])
 
 	json.Unmarshal(jsonBuf, docPointer.Interface())
-	item := c.GetConvResult(docPointer, c.Prototype)
+	item := c.GetConvResult(docPointer)
 
 	//--------------------------------------------
 	if item != nil {
