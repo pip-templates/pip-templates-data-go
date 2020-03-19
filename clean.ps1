@@ -1,5 +1,6 @@
 #!/usr/bin/env pwsh
 
+# Recreate image names using the data in the "component.json" file
 $component = Get-Content -Path "component.json" | ConvertFrom-Json
 $buildImage="$($component.registry)/$($component.name):$($component.version)-build"
 $testImage="$($component.registry)/$($component.name):$($component.version)-test"
