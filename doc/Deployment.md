@@ -5,7 +5,7 @@
 ## <a name="process"></a> Standalone Process
 
 The simplest way to deploy the microservice is to run it as a standalone process. 
-This microservice is implemented in GoLang and requires installation of Go. 
+This microservice is implemented in Golang and requires installation of Go. 
 You can get it from the official website: https://golang.org/dl/
 
 **Step 1.** Download the microservice by following these [instructions](Download.md)

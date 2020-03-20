@@ -162,7 +162,7 @@ go bin/run.go
 
 The easiest way to work with the microservice is through the client SDK. 
 
-If you use GoLang, then get references to the required libraries:
+If you use Golang, then get references to the required libraries:
 - Pip.Services3.Commons : https://github.com/pip-services3-go/pip-services3-commons-go
 - Pip.Services3.Rpc: 
 https://github.com/pip-services3-go/pip-services3-rpc-go

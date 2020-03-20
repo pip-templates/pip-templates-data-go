@@ -1,4 +1,3 @@
-<!-- Todo: this is the node.js version. Update for GoLang -->
 # HTTP Protocol (version 1) <br/> Beacons Microservice
 
 The Beacons Microservice implements an HTTP compatible API, that can be accessed on a configured port.
@@ -20,13 +19,13 @@ All input and output data is serialized in JSON format. Errors are returned in [
 Represents a beacon
 
 **Properties:**
-- id: string - a unique beacon id
-- site_id: string - the unique id of the worksite where the beacon is being used
-- type: string - the beacon's type (iBeacon, EddyStoneUdi, etc.)
-- udi: string - the UDI of the beacon
-- label: string - the beacon's label
-- center: GeoJson - the position of the beacon
-- radius: double - the beacon's coverage radius
+- Id: string - a unique beacon id
+- Site_id: string - the unique id of the worksite where the beacon is being used
+- Type: string - the beacon's type (iBeacon, EddyStoneUdi, etc.)
+- Udi: string - the UDI of the beacon
+- Label: string - the beacon's label
+- Center: GeoPointV1(GeoJson) - the position of the beacon
+- Radius: double - the beacon's coverage radius
 
 ## Operations
 
@@ -47,7 +46,7 @@ Retrieves a collection of beacons, according to the specified criteria
   - take: int - (optional) page length (max: 100). Operation returns paged results
 
 **Response body:**
-A DataPage<BeaconV1> object that contains an array of BeaconV1 objects as its "data", or an error
+A BeaconV1DataPage object that contains an array of BeaconV1 objects as its "Data", or an error
 
 ### <a name="operation2"></a> Method: 'POST', route '/v1/beacons/get_beacon_by_id'
 
@@ -81,7 +80,7 @@ Calculates the approximate location of a device using the locations of nearby be
 - udis: string[] - an array of nearby beacon UDIs
 
 **Response body:**
-A GeoJson object that contains the center-position of the provided beacons, null if beacons weren't found, or an error 
+A GeoPointV1(GeoJson) object that contains the center-position of the provided beacons, null if beacons weren't found, or an error 
 
 ### <a name="operation5"></a> Method: 'POST', route '/v1/beacons/create_beacon'
 

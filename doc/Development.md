@@ -9,8 +9,8 @@ This document provides high-level instructions on how to build and test the micr
 
 ## <a name="setup"></a> Environment Setup
 
-This is a GoLand project, so you'll have to install Go to work with it. 
-You can download it from the official website: https://golang.org/dl/
+This is a Golang project, so you'll have to install Golang tools to work with it. 
+You can download them from the official website: https://golang.org/dl/
 
 You can check that Go has been successfully installed by running the following command:
 ```bash
@@ -46,7 +46,7 @@ git pull
 ## <a name="build"></a> Building
 
 This microservice is written in the language Go, so, if you make changes to the source code, you need to compile 
-it before running or committing to GitHub. The process will output compiled library files into an /obj/app folder.
+it before running or committing to GitHub. The process will output an executable Go file named run.go in the ./bin folder:
 
 ```bash
 go build ./bin/run.go
