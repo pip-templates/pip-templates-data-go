@@ -9,8 +9,7 @@ The microservice currently supports the following deployment options:
 
 This microservice does not depend on other microservices.
 
-<!-- Todo -->
-<!-- <a name="links"></a> Quick Links:
+<a name="links"></a> Quick Links:
 
 * [Download Links](doc/Downloads.md)
 * [Development Guide](doc/Development.md)
@@ -18,7 +17,7 @@ This microservice does not depend on other microservices.
 * [Deployment Guide](doc/Deployment.md)
 * Communication Protocols
   - [HTTP Version 1](doc/HttpProtocolV1.md)
-  Todo: gRPC -->
+  <!-- Todo: gRPC  -->
 
 ## Contract
 
