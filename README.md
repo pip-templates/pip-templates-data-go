@@ -150,8 +150,8 @@ Example of a microservice configuration
       host: 0.0.0.0
       port: {{GRPC_PORT}}{{^if GRPC_PORT}}8081{{/if}}
 ```
-<!-- Todo -->
-<!-- For more information on microservice configuration, see [The Configuration Guide](Configuration.md). -->
+
+For more information on microservice configuration, see [The Configuration Guide](Configuration.md).
 
 The microservice can be started using the command:
 ```bash
