@@ -5,7 +5,7 @@ This is the Beacons microservice from the Pip.Templates library.
 The microservice currently supports the following deployment options:
 * Deployment platforms: Standalone Process
 * External APIs: HTTP/REST, gRPC
-* Persistence: Memory, Flat Files, MongoDB
+* Persistence: Memory, Flat Files, MongoDB, Couchbase
 
 This microservice does not depend on other microservices.
 
@@ -71,6 +71,7 @@ The Pip.Service team is working on implementing packaging, to make stable releas
 Add the **config.yml** file to the config folder and set configuration parameters as needed.
 
 Example of a microservice configuration
+<!-- Todo: needed? -->
 ```yaml
 ---
   # Container descriptor
@@ -169,10 +170,10 @@ https://github.com/pip-services3-go/pip-services3-rpc-go
 Import needed modules from **pip-services3-commons-go** and **pip-templates-microservice-go**
 ```go
 import (
-	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+  cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
+  cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
   bclients "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
   bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
-  cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
 )
 ```
 
@@ -186,17 +187,21 @@ httpConfig := cconf.NewConfigParamsFromTuples(
 )
 ```
 
+<!-- Todo: setReferences (loggers, counters, ConnectionResolver) -->
 Instantiate the client and open a connection to the microservice
 ```go
 // Create the client instance
-var client := bclients.NewBeaconsHttpClientV1()
+client := bclients.NewBeaconsHttpClientV1()
 
 // Configure the client
 client.Configure(httpConfig)
 
 // Connect to the microservice
 client.Open("")
-    
+
+// For closing the client when we're done with it
+defer client.Close("")
+
 // Work with the microservice
 ...
 ```
@@ -204,7 +209,7 @@ client.Open("")
 The client is now ready to perform operations
 ```go
 // Define a beacon
-var beacon := bdata.BeaconV1{
+beacon := bdata.BeaconV1{
     Id:      "1",
     Udi:     "00001",
     Type:    bdata.BeaconTypeV1.AltBeacon,
