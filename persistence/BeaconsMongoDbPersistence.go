@@ -6,7 +6,6 @@ import (
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
 	mpersist "github.com/pip-services3-go/pip-services3-mongodb-go/persistence"
-	data "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,7 +16,7 @@ type BeaconsMongoDbPersistence struct {
 }
 
 func NewBeaconsMongoDbPersistence() *BeaconsMongoDbPersistence {
-	proto := reflect.TypeOf(&data.BeaconV1{})
+	proto := reflect.TypeOf(&data1.BeaconV1{})
 	c := BeaconsMongoDbPersistence{}
 	c.IdentifiableMongoDbPersistence = *mpersist.NewIdentifiableMongoDbPersistence(proto, "beacons")
 	return &c
