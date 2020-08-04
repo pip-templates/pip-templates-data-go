@@ -2,21 +2,21 @@ package persistence
 
 import (
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
-	cmperist "github.com/pip-services3-go/pip-services3-data-go/persistence"
+	cpersist "github.com/pip-services3-go/pip-services3-data-go/persistence"
 )
 
 type BeaconsFilePersistence struct {
 	BeaconsMemoryPersistence
-	persister *cmperist.JsonFilePersister
+	persister *cpersist.JsonFilePersister
 }
 
 func NewBeaconsFilePersistence(path string) *BeaconsFilePersistence {
-	bfp := BeaconsFilePersistence{}
-	bfp.BeaconsMemoryPersistence = *NewBeaconsMemoryPersistence()
-	bfp.persister = cmperist.NewJsonFilePersister(bfp.Prototype, path)
-	bfp.Loader = bfp.persister
-	bfp.Saver = bfp.persister
-	return &bfp
+	c := BeaconsFilePersistence{}
+	c.BeaconsMemoryPersistence = *NewBeaconsMemoryPersistence()
+	c.persister = cpersist.NewJsonFilePersister(c.Prototype, path)
+	c.Loader = c.persister
+	c.Saver = c.persister
+	return &c
 }
 
 func (c *BeaconsFilePersistence) Configure(config *cconf.ConfigParams) {

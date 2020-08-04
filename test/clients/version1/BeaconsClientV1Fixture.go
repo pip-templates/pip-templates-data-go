@@ -4,44 +4,43 @@ import (
 	"testing"
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
-	bclients "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
-	bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
+	clients1 "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
+	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 	"github.com/stretchr/testify/assert"
 )
 
 type BeaconsClientV1Fixture struct {
-	Beacon1 bdata.BeaconV1
-	Beacon2 bdata.BeaconV1
-	Beacon3 bdata.BeaconV1
-	client  bclients.IBeaconsClientV1
+	Beacon1 data1.BeaconV1
+	Beacon2 data1.BeaconV1
+	Beacon3 data1.BeaconV1
+	client  clients1.IBeaconsClientV1
 }
 
-func NewBeaconsClientV1Fixture(client bclients.IBeaconsClientV1) *BeaconsClientV1Fixture {
-	bcf := BeaconsClientV1Fixture{}
-	bcf.Beacon1 = bdata.BeaconV1{
+func NewBeaconsClientV1Fixture(client clients1.IBeaconsClientV1) *BeaconsClientV1Fixture {
+	c := BeaconsClientV1Fixture{}
+	c.Beacon1 = data1.BeaconV1{
 		Id:      "1",
 		Udi:     "00001",
-		Type:    bdata.BeaconTypeV1.AltBeacon,
+		Type:    data1.AltBeacon,
 		Site_id: "1",
 		Label:   "TestBeacon1",
-		Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
+		Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
 		Radius:  50,
 	}
-	bcf.Beacon2 = bdata.BeaconV1{
+	c.Beacon2 = data1.BeaconV1{
 		Id:      "2",
 		Udi:     "00002",
-		Type:    bdata.BeaconTypeV1.IBeacon,
+		Type:    data1.IBeacon,
 		Site_id: "1",
 		Label:   "TestBeacon2",
-		Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
+		Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
 		Radius:  70,
 	}
-	bcf.client = client
-	return &bcf
+	c.client = client
+	return &c
 }
 
 func (c *BeaconsClientV1Fixture) testCreateBeacons(t *testing.T) {
-
 	// Create the first beacon
 	beacon, err := c.client.CreateBeacon("", c.Beacon1)
 	assert.Nil(t, err)
@@ -64,7 +63,7 @@ func (c *BeaconsClientV1Fixture) testCreateBeacons(t *testing.T) {
 }
 
 func (c *BeaconsClientV1Fixture) TestCrudOperations(t *testing.T) {
-	var beacon1 bdata.BeaconV1
+	var beacon1 data1.BeaconV1
 
 	// Create items
 	c.testCreateBeacons(t)
@@ -103,7 +102,6 @@ func (c *BeaconsClientV1Fixture) TestCrudOperations(t *testing.T) {
 }
 
 func (c *BeaconsClientV1Fixture) TestCalculatePosition(t *testing.T) {
-
 	// Create items
 	c.testCreateBeacons(t)
 
@@ -114,5 +112,4 @@ func (c *BeaconsClientV1Fixture) TestCalculatePosition(t *testing.T) {
 	assert.Equal(t, "Point", position.Type)
 	assert.Equal(t, (float32)(0), position.Coordinates[0][0])
 	assert.Equal(t, (float32)(0), position.Coordinates[0][1])
-
 }

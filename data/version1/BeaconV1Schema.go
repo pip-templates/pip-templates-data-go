@@ -10,15 +10,15 @@ type BeaconV1Schema struct {
 }
 
 func NewBeaconV1Schema() *BeaconV1Schema {
-	bs := BeaconV1Schema{}
-	bs.ObjectSchema = *cvalid.NewObjectSchema()
+	c := BeaconV1Schema{}
+	c.ObjectSchema = *cvalid.NewObjectSchema()
 
-	bs.WithOptionalProperty("id", cconv.String)
-	bs.WithRequiredProperty("site_id", cconv.String)
-	bs.WithOptionalProperty("type", cconv.String)
-	bs.WithRequiredProperty("udi", cconv.String)
-	bs.WithOptionalProperty("label", cconv.String)
-	bs.WithOptionalProperty("center", cconv.Map)
-	bs.WithOptionalProperty("radius", cconv.Double)
-	return &bs
+	c.WithOptionalProperty("id", cconv.String)
+	c.WithRequiredProperty("site_id", cconv.String)
+	c.WithOptionalProperty("type", cconv.String)
+	c.WithRequiredProperty("udi", cconv.String)
+	c.WithOptionalProperty("label", cconv.String)
+	c.WithOptionalProperty("center", cconv.Map)
+	c.WithOptionalProperty("radius", cconv.Double)
+	return &c
 }

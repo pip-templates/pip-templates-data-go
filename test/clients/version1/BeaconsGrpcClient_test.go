@@ -5,24 +5,23 @@ import (
 
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
-	bclients "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
-	blogic "github.com/pip-templates/pip-templates-microservice-go/logic"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	clients1 "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
+	logic "github.com/pip-templates/pip-templates-microservice-go/logic"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 	bservices "github.com/pip-templates/pip-templates-microservice-go/services/version1"
 )
 
 func TestBeaconsGrpcClientV1(t *testing.T) {
-
-	var persistence *bpersist.BeaconsMemoryPersistence
-	var controller *blogic.BeaconsController
+	var persistence *persist.BeaconsMemoryPersistence
+	var controller *logic.BeaconsController
 	var service *bservices.BeaconsGrpcServiceV1
-	var client *bclients.BeaconsGrpcClientV1
+	var client *clients1.BeaconsGrpcClientV1
 	var fixture *BeaconsClientV1Fixture
 
-	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence = persist.NewBeaconsMemoryPersistence()
 	persistence.Configure(cconf.NewEmptyConfigParams())
 
-	controller = blogic.NewBeaconsController()
+	controller = logic.NewBeaconsController()
 	controller.Configure(cconf.NewEmptyConfigParams())
 
 	httpConfig := cconf.NewConfigParamsFromTuples(
@@ -34,7 +33,7 @@ func TestBeaconsGrpcClientV1(t *testing.T) {
 	service = bservices.NewBeaconsGrpcServiceV1()
 	service.Configure(httpConfig)
 
-	client = bclients.NewBeaconsGrpcClientV1()
+	client = clients1.NewBeaconsGrpcClientV1()
 	client.Configure(httpConfig)
 
 	references := cref.NewReferencesFromTuples(
@@ -68,5 +67,4 @@ func TestBeaconsGrpcClientV1(t *testing.T) {
 	t.Run("BeaconsGrpcClientV1:CRUD Operations", fixture.TestCrudOperations)
 	persistence.Clear("")
 	t.Run("BeaconsGrpcClientV1:1Calculate Positions", fixture.TestCalculatePosition)
-
 }

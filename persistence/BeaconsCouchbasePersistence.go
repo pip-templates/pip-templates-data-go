@@ -7,8 +7,7 @@ import (
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
 	cbpersist "github.com/pip-services3-go/pip-services3-couchbase-go/persistence"
-	bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
-	data "github.com/pip-templates/pip-templates-microservice-go/data/version1"
+	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 	"gopkg.in/couchbase/gocb.v1"
 )
 
@@ -17,10 +16,10 @@ type BeaconsCouchbasePersistence struct {
 }
 
 func NewBeaconsCouchbasePersistence() *BeaconsCouchbasePersistence {
-	proto := reflect.TypeOf(&data.BeaconV1{})
-	bmp := BeaconsCouchbasePersistence{}
-	bmp.IdentifiableCouchbasePersistence = *cbpersist.NewIdentifiableCouchbasePersistence(proto, "beaconBucket", "beacons")
-	return &bmp
+	proto := reflect.TypeOf(&data1.BeaconV1{})
+	c := BeaconsCouchbasePersistence{}
+	c.IdentifiableCouchbasePersistence = *cbpersist.NewIdentifiableCouchbasePersistence(proto, "beaconBucket", "beacons")
+	return &c
 }
 
 func (c *BeaconsCouchbasePersistence) composeFilter(filter *cdata.FilterParams) string {
@@ -32,20 +31,20 @@ func (c *BeaconsCouchbasePersistence) composeFilter(filter *cdata.FilterParams) 
 
 	id := filter.GetAsString("id")
 	if id != "" {
-		criteria = append(criteria, " id = '"+id+"'")
+		criteria = append(criteria, " id='"+id+"'")
 	}
 
 	siteId := filter.GetAsString("site_id")
 	if siteId != "" {
-		criteria = append(criteria, " site_id = '"+siteId+"'")
+		criteria = append(criteria, " site_id='"+siteId+"'")
 	}
 	label := filter.GetAsString("label")
 	if label != "" {
-		criteria = append(criteria, " label = '"+label+"'")
+		criteria = append(criteria, " label='"+label+"'")
 	}
 	udi := filter.GetAsString("udi")
 	if udi != "" {
-		criteria = append(criteria, " udi= '"+udi+"'")
+		criteria = append(criteria, " udi='"+udi+"'")
 	}
 
 	udis := filter.GetAsString("udis")
@@ -65,92 +64,108 @@ func (c *BeaconsCouchbasePersistence) composeFilter(filter *cdata.FilterParams) 
 	return ""
 }
 
-func (c *BeaconsCouchbasePersistence) Create(correlationId string, item bdata.BeaconV1) (result *bdata.BeaconV1, err error) {
+func (c *BeaconsCouchbasePersistence) Create(correlationId string, item data1.BeaconV1) (*data1.BeaconV1, error) {
 	value, err := c.IdentifiableCouchbasePersistence.Create(correlationId, item)
 
-	if value != nil {
-		val, _ := value.(*bdata.BeaconV1)
-		result = val
+	if value == nil || err != nil {
+		return nil, err
 	}
-	return result, err
+
+	result, _ := value.(*data1.BeaconV1)
+	return result, nil
 }
 
-func (c *BeaconsCouchbasePersistence) GetListByIds(correlationId string, ids []string) (items []*bdata.BeaconV1, err error) {
+func (c *BeaconsCouchbasePersistence) GetListByIds(correlationId string, ids []string) ([]*data1.BeaconV1, error) {
 	convIds := make([]interface{}, len(ids))
 	for i, v := range ids {
 		convIds[i] = v
 	}
+
 	result, err := c.IdentifiableCouchbasePersistence.GetListByIds(correlationId, convIds)
-	items = make([]*bdata.BeaconV1, len(result))
+
+	if result == nil || err != nil {
+		return nil, err
+	}
+
+	items := make([]*data1.BeaconV1, len(result))
 	for i, v := range result {
-		val, _ := v.(*bdata.BeaconV1)
+		val, _ := v.(*data1.BeaconV1)
 		items[i] = val
 	}
-	return items, err
+	return items, nil
 }
 
-func (c *BeaconsCouchbasePersistence) GetOneById(correlationId string, id string) (item *bdata.BeaconV1, err error) {
+func (c *BeaconsCouchbasePersistence) GetOneById(correlationId string, id string) (*data1.BeaconV1, error) {
 	result, err := c.IdentifiableCouchbasePersistence.GetOneById(correlationId, id)
-	if result != nil {
-		val, _ := result.(*bdata.BeaconV1)
-		item = val
+
+	if result == nil || err != nil {
+		return nil, err
 	}
-	return item, err
+
+	item, _ := result.(*data1.BeaconV1)
+	return item, nil
 }
 
-func (c *BeaconsCouchbasePersistence) Update(correlationId string, item bdata.BeaconV1) (result *bdata.BeaconV1, err error) {
+func (c *BeaconsCouchbasePersistence) Update(correlationId string, item data1.BeaconV1) (*data1.BeaconV1, error) {
 	value, err := c.IdentifiableCouchbasePersistence.Update(correlationId, item)
-	if value != nil {
-		val, _ := value.(*bdata.BeaconV1)
-		result = val
+
+	if value == nil || err != nil {
+		return nil, err
 	}
-	return result, err
+
+	result, _ := value.(*data1.BeaconV1)
+	return result, nil
 }
 
-func (c *BeaconsCouchbasePersistence) UpdatePartially(correlationId string, id string, data *cdata.AnyValueMap) (item *bdata.BeaconV1, err error) {
+func (c *BeaconsCouchbasePersistence) UpdatePartially(correlationId string, id string, data *cdata.AnyValueMap) (*data1.BeaconV1, error) {
 	result, err := c.IdentifiableCouchbasePersistence.UpdatePartially(correlationId, id, data)
 
-	if result != nil {
-		val, _ := result.(*bdata.BeaconV1)
-		item = val
+	if result == nil || err != nil {
+		return nil, err
 	}
+
+	item, _ := result.(*data1.BeaconV1)
 	return item, err
 }
 
-func (c *BeaconsCouchbasePersistence) DeleteById(correlationId string, id string) (item *bdata.BeaconV1, err error) {
+func (c *BeaconsCouchbasePersistence) DeleteById(correlationId string, id string) (*data1.BeaconV1, error) {
 	result, err := c.IdentifiableCouchbasePersistence.DeleteById(correlationId, id)
-	if result != nil {
-		val, _ := result.(*bdata.BeaconV1)
-		item = val
+
+	if result == nil || err != nil {
+		return nil, err
 	}
+
+	item, _ := result.(*data1.BeaconV1)
 	return item, err
 }
 
-func (c *BeaconsCouchbasePersistence) DeleteByIds(correlationId string, ids []string) (err error) {
+func (c *BeaconsCouchbasePersistence) DeleteByIds(correlationId string, ids []string) error {
 	convIds := make([]interface{}, len(ids))
 	for i, v := range ids {
 		convIds[i] = v
 	}
+
 	return c.IdentifiableCouchbasePersistence.DeleteByIds(correlationId, convIds)
 }
 
-func (c *BeaconsCouchbasePersistence) GetPageByFilter(correlationId string, filter *cdata.FilterParams, paging *cdata.PagingParams) (page *bdata.BeaconV1DataPage, err error) {
-	tempPage, resErr := c.IdentifiableCouchbasePersistence.GetPageByFilter(correlationId, c.composeFilter(filter), paging, "", "")
-	if resErr != nil {
-		return nil, resErr
+func (c *BeaconsCouchbasePersistence) GetPageByFilter(correlationId string, filter *cdata.FilterParams, paging *cdata.PagingParams) (*data1.BeaconV1DataPage, error) {
+	tempPage, err := c.IdentifiableCouchbasePersistence.GetPageByFilter(correlationId, c.composeFilter(filter), paging, "", "")
+
+	if tempPage == nil || err != nil {
+		return nil, err
 	}
+
 	// Convert to BeaconV1DataPage
 	dataLen := int64(len(tempPage.Data)) // For full release tempPage and delete this by GC
-	beaconData := make([]*bdata.BeaconV1, dataLen)
+	beaconData := make([]*data1.BeaconV1, dataLen)
 	for i, v := range tempPage.Data {
-		beaconData[i] = v.(*bdata.BeaconV1)
+		beaconData[i] = v.(*data1.BeaconV1)
 	}
-	page = bdata.NewBeaconV1DataPage(&dataLen, beaconData)
+	page := data1.NewBeaconV1DataPage(tempPage.Total, beaconData)
 	return page, nil
 }
 
-func (c *BeaconsCouchbasePersistence) GetOneByUdi(correlationId string, udi string) (result *bdata.BeaconV1, err error) {
-
+func (c *BeaconsCouchbasePersistence) GetOneByUdi(correlationId string, udi string) (*data1.BeaconV1, error) {
 	if udi == "" {
 		return nil, nil
 	}
@@ -171,12 +186,11 @@ func (c *BeaconsCouchbasePersistence) GetOneByUdi(correlationId string, udi stri
 	json.Unmarshal(jsonBuf, docPointer.Interface())
 	item := c.GetConvResult(docPointer)
 
-	//--------------------------------------------
-	if item != nil {
-		val, _ := item.(*bdata.BeaconV1)
-		result = val
+	if item == nil {
+		return nil, nil //??
 	}
 
+	//--------------------------------------------
+	result, _ := item.(*data1.BeaconV1)
 	return result, nil
-
 }

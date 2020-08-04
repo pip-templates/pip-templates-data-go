@@ -8,28 +8,27 @@ import (
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
 	cmdproto "github.com/pip-services3-go/pip-services3-grpc-go/protos"
-	bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
-	blogic "github.com/pip-templates/pip-templates-microservice-go/logic"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
-	bservices "github.com/pip-templates/pip-templates-microservice-go/services/version1"
+	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
+	logic "github.com/pip-templates/pip-templates-microservice-go/logic"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	services1 "github.com/pip-templates/pip-templates-microservice-go/services/version1"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 )
 
 func TestBeaconsGrpcServiceV1(t *testing.T) {
-
-	var persistence *bpersist.BeaconsMemoryPersistence
-	var controller *blogic.BeaconsController
-	var service *bservices.BeaconsGrpcServiceV1
+	var persistence *persist.BeaconsMemoryPersistence
+	var controller *logic.BeaconsController
+	var service *services1.BeaconsGrpcServiceV1
 	var client cmdproto.CommandableClient
 
-	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence = persist.NewBeaconsMemoryPersistence()
 	persistence.Configure(cconf.NewEmptyConfigParams())
 
-	controller = blogic.NewBeaconsController()
+	controller = logic.NewBeaconsController()
 	controller.Configure(cconf.NewEmptyConfigParams())
-	service = bservices.NewBeaconsGrpcServiceV1()
+	service = services1.NewBeaconsGrpcServiceV1()
 	service.Configure(cconf.NewConfigParamsFromTuples(
 		"connection.protocol", "http",
 		"connection.port", "3002",
@@ -65,7 +64,7 @@ func TestBeaconsGrpcServiceV1(t *testing.T) {
 	defer conn.Close()
 	client = cmdproto.NewCommandableClient(conn)
 
-	var beacon1 bdata.BeaconV1
+	var beacon1 data1.BeaconV1
 	// Create the first beacon
 	requestParams := make(map[string]interface{})
 	requestParams["beacon"] = Beacon1
@@ -77,7 +76,7 @@ func TestBeaconsGrpcServiceV1(t *testing.T) {
 	request.ArgsJson = string(jsonBuf)
 	response, err := client.Invoke(context.TODO(), &request)
 	assert.Nil(t, err)
-	var beacon bdata.BeaconV1
+	var beacon data1.BeaconV1
 	jsonErr := json.Unmarshal([]byte(response.ResultJson), &beacon)
 	assert.Nil(t, jsonErr)
 	assert.NotNil(t, beacon)
@@ -114,7 +113,7 @@ func TestBeaconsGrpcServiceV1(t *testing.T) {
 	response, err = client.Invoke(context.TODO(), &request)
 	assert.Nil(t, err)
 
-	var page bdata.BeaconV1DataPage
+	var page data1.BeaconV1DataPage
 	jsonErr = json.Unmarshal([]byte(response.ResultJson), &page)
 	assert.Nil(t, jsonErr)
 	assert.NotNil(t, page)
@@ -167,7 +166,7 @@ func TestBeaconsGrpcServiceV1(t *testing.T) {
 	response, err = client.Invoke(context.TODO(), &request)
 	assert.Nil(t, err)
 
-	var position bdata.GeoPointV1
+	var position data1.GeoPointV1
 	jsonErr = json.Unmarshal([]byte(response.ResultJson), &position)
 	assert.Nil(t, jsonErr)
 	assert.NotNil(t, beacon)
@@ -204,7 +203,7 @@ func TestBeaconsGrpcServiceV1(t *testing.T) {
 	response, err = client.Invoke(context.TODO(), &request)
 	assert.Nil(t, err)
 
-	beacon = bdata.BeaconV1{}
+	beacon = data1.BeaconV1{}
 
 	jsonErr = json.Unmarshal([]byte(response.ResultJson), &beacon)
 	assert.Nil(t, jsonErr)

@@ -5,15 +5,14 @@ import (
 	"testing"
 
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 )
 
 // Warning!
 // Bucket - "beaconBucket" must be exists!!!
 // Autocreate backet method not work in this release.
 func TestBeaconsCouchbasePersistence(t *testing.T) {
-
-	var persistence *bpersist.BeaconsCouchbasePersistence
+	var persistence *persist.BeaconsCouchbasePersistence
 	var fixture *BeaconsPersistenceFixture
 
 	couchbaseUri := os.Getenv("COUCHBASE_URI")
@@ -38,7 +37,7 @@ func TestBeaconsCouchbasePersistence(t *testing.T) {
 		return
 	}
 
-	persistence = bpersist.NewBeaconsCouchbasePersistence()
+	persistence = persist.NewBeaconsCouchbasePersistence()
 	dbConfig := cconf.NewConfigParamsFromTuples(
 		"options.auto_create", false, // true
 		"options.auto_index", true,
@@ -64,5 +63,4 @@ func TestBeaconsCouchbasePersistence(t *testing.T) {
 	t.Run("BeaconsCouchbasePersistence:CRUD Operations", fixture.TestCrudOperations)
 	persistence.Clear("")
 	t.Run("BeaconsCouchbasePersistence:Get with Filters", fixture.TestGetWithFilters)
-
 }

@@ -5,12 +5,12 @@ import (
 	"testing"
 
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 )
 
 func TestBeaconsMongoDbPersistence(t *testing.T) {
 
-	var persistence *bpersist.BeaconsMongoDbPersistence
+	var persistence *persist.BeaconsMongoDbPersistence
 	var fixture *BeaconsPersistenceFixture
 
 	mongoUri := os.Getenv("MONGO_SERVICE_URI")
@@ -34,7 +34,7 @@ func TestBeaconsMongoDbPersistence(t *testing.T) {
 		return
 	}
 
-	persistence = bpersist.NewBeaconsMongoDbPersistence()
+	persistence = persist.NewBeaconsMongoDbPersistence()
 	persistence.Configure(cconf.NewConfigParamsFromTuples(
 		"connection.uri", mongoUri,
 		"connection.host", mongoHost,

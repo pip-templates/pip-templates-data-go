@@ -5,24 +5,23 @@ import (
 
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
-	bclients "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
-	blogic "github.com/pip-templates/pip-templates-microservice-go/logic"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	clients1 "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
+	logic "github.com/pip-templates/pip-templates-microservice-go/logic"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 )
 
 func TestBeaconsDirectClientV1(t *testing.T) {
-
-	var persistence *bpersist.BeaconsMemoryPersistence
-	var controller *blogic.BeaconsController
-	var client *bclients.BeaconsDirectClientV1
+	var persistence *persist.BeaconsMemoryPersistence
+	var controller *logic.BeaconsController
+	var client *clients1.BeaconsDirectClientV1
 	var fixture *BeaconsClientV1Fixture
 
-	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence = persist.NewBeaconsMemoryPersistence()
 	persistence.Configure(cconf.NewEmptyConfigParams())
 
-	controller = blogic.NewBeaconsController()
+	controller = logic.NewBeaconsController()
 	controller.Configure(cconf.NewEmptyConfigParams())
-	client = bclients.NewBeaconsDirectClientV1()
+	client = clients1.NewBeaconsDirectClientV1()
 
 	references := cref.NewReferencesFromTuples(
 		cref.NewDescriptor("beacons", "persistence", "memory", "default", "1.0"), persistence,
@@ -40,5 +39,4 @@ func TestBeaconsDirectClientV1(t *testing.T) {
 	t.Run("TestBeaconsDirectClientV1:CRUD Operations", fixture.TestCrudOperations)
 	persistence.Clear("")
 	t.Run("TestBeaconsDirectClientV:1Calculate Positions", fixture.TestCalculatePosition)
-
 }

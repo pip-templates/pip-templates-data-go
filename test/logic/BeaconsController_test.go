@@ -6,41 +6,41 @@ import (
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
-	bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
-	blogic "github.com/pip-templates/pip-templates-microservice-go/logic"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
+	logic "github.com/pip-templates/pip-templates-microservice-go/logic"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 	"github.com/stretchr/testify/assert"
 )
 
-var Beacon1 bdata.BeaconV1 = bdata.BeaconV1{
+var Beacon1 data1.BeaconV1 = data1.BeaconV1{
 	Id:      "1",
 	Udi:     "00001",
-	Type:    bdata.BeaconTypeV1.AltBeacon,
+	Type:    data1.AltBeacon,
 	Site_id: "1",
 	Label:   "TestBeacon1",
-	Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
+	Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
 	Radius:  50,
 }
 
-var Beacon2 bdata.BeaconV1 = bdata.BeaconV1{
+var Beacon2 data1.BeaconV1 = data1.BeaconV1{
 	Id:      "2",
 	Udi:     "00002",
-	Type:    bdata.BeaconTypeV1.IBeacon,
+	Type:    data1.IBeacon,
 	Site_id: "1",
 	Label:   "TestBeacon2",
-	Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
+	Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
 	Radius:  70,
 }
 
-var persistence *bpersist.BeaconsMemoryPersistence
-var controller *blogic.BeaconsController
+var persistence *persist.BeaconsMemoryPersistence
+var controller *logic.BeaconsController
 
 func TestBeaconsController(t *testing.T) {
 
-	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence = persist.NewBeaconsMemoryPersistence()
 	persistence.Configure(cconf.NewEmptyConfigParams())
 
-	controller = blogic.NewBeaconsController()
+	controller = logic.NewBeaconsController()
 	controller.Configure(cconf.NewEmptyConfigParams())
 
 	references := cref.NewReferencesFromTuples(
@@ -60,7 +60,7 @@ func TestBeaconsController(t *testing.T) {
 }
 
 func CrudOperations(t *testing.T) {
-	var beacon1 bdata.BeaconV1
+	var beacon1 data1.BeaconV1
 
 	// Create the first beacon
 	beacon, err := controller.CreateBeacon("", Beacon1)
@@ -116,7 +116,6 @@ func CrudOperations(t *testing.T) {
 }
 
 func CalculatePositions(t *testing.T) {
-
 	// Create the first beacon
 	beacon, err := controller.CreateBeacon("", Beacon1)
 	assert.Nil(t, err)

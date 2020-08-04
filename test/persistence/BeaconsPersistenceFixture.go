@@ -4,53 +4,52 @@ import (
 	"testing"
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
-	bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 	"github.com/stretchr/testify/assert"
 )
 
 type BeaconsPersistenceFixture struct {
-	Beacon1     bdata.BeaconV1
-	Beacon2     bdata.BeaconV1
-	Beacon3     bdata.BeaconV1
-	persistence bpersist.IBeaconsPersistence
+	Beacon1     data1.BeaconV1
+	Beacon2     data1.BeaconV1
+	Beacon3     data1.BeaconV1
+	persistence persist.IBeaconsPersistence
 }
 
-func NewBeaconsPersistenceFixture(persistence bpersist.IBeaconsPersistence) *BeaconsPersistenceFixture {
-	bpf := BeaconsPersistenceFixture{}
-	bpf.Beacon1 = bdata.BeaconV1{
+func NewBeaconsPersistenceFixture(persistence persist.IBeaconsPersistence) *BeaconsPersistenceFixture {
+	c := BeaconsPersistenceFixture{}
+	c.Beacon1 = data1.BeaconV1{
 		Id:      "1",
 		Udi:     "00001",
-		Type:    bdata.BeaconTypeV1.AltBeacon,
+		Type:    data1.AltBeacon,
 		Site_id: "1",
 		Label:   "TestBeacon1",
-		Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
+		Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
 		Radius:  50,
 	}
-	bpf.Beacon2 = bdata.BeaconV1{
+	c.Beacon2 = data1.BeaconV1{
 		Id:      "2",
 		Udi:     "00002",
-		Type:    bdata.BeaconTypeV1.IBeacon,
+		Type:    data1.IBeacon,
 		Site_id: "1",
 		Label:   "TestBeacon2",
-		Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
+		Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
 		Radius:  70,
 	}
-	bpf.Beacon3 = bdata.BeaconV1{
+	c.Beacon3 = data1.BeaconV1{
 		Id:      "3",
 		Udi:     "00003",
-		Type:    bdata.BeaconTypeV1.AltBeacon,
+		Type:    data1.AltBeacon,
 		Site_id: "2",
 		Label:   "TestBeacon3",
-		Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{10.0, 10.0}}},
+		Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{10.0, 10.0}}},
 		Radius:  50,
 	}
-	bpf.persistence = persistence
-	return &bpf
+	c.persistence = persistence
+	return &c
 }
 
 func (c *BeaconsPersistenceFixture) testCreateBeacons(t *testing.T) {
-
 	// Create the first beacon
 	beacon, err := c.persistence.Create("", c.Beacon1)
 	assert.Nil(t, err)
@@ -83,7 +82,7 @@ func (c *BeaconsPersistenceFixture) testCreateBeacons(t *testing.T) {
 }
 
 func (c *BeaconsPersistenceFixture) TestCrudOperations(t *testing.T) {
-	var beacon1 bdata.BeaconV1
+	var beacon1 data1.BeaconV1
 
 	// Create items
 	c.testCreateBeacons(t)
@@ -123,7 +122,6 @@ func (c *BeaconsPersistenceFixture) TestCrudOperations(t *testing.T) {
 }
 
 func (c *BeaconsPersistenceFixture) TestGetWithFilters(t *testing.T) {
-
 	// Create items
 	c.testCreateBeacons(t)
 

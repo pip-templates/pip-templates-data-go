@@ -4,14 +4,14 @@ import (
 	"testing"
 
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
 )
 
 func TestBeaconsFilePersistence(t *testing.T) {
-	var persistence *bpersist.BeaconsFilePersistence
+	var persistence *persist.BeaconsFilePersistence
 	var fixture *BeaconsPersistenceFixture
 
-	persistence = bpersist.NewBeaconsFilePersistence("../../temp/beacons.test.json")
+	persistence = persist.NewBeaconsFilePersistence("../../temp/beacons.test.json")
 	persistence.Configure(cconf.NewEmptyConfigParams())
 	fixture = NewBeaconsPersistenceFixture(persistence)
 

@@ -3,7 +3,7 @@ package container
 import (
 	cproc "github.com/pip-services3-go/pip-services3-container-go/container"
 	rpcbuild "github.com/pip-services3-go/pip-services3-rpc-go/build"
-	bfactory "github.com/pip-templates/pip-templates-microservice-go/build"
+	factory "github.com/pip-templates/pip-templates-microservice-go/build"
 )
 
 type BeaconsProcess struct {
@@ -11,10 +11,9 @@ type BeaconsProcess struct {
 }
 
 func NewBeaconsProcess() *BeaconsProcess {
-
-	bp := BeaconsProcess{}
-	bp.ProcessContainer = *cproc.NewEmptyProcessContainer()
-	bp.AddFactory(bfactory.NewBeaconsServiceFactory())
-	bp.AddFactory(rpcbuild.NewDefaultRpcFactory())
-	return &bp
+	c := BeaconsProcess{}
+	c.ProcessContainer = *cproc.NewEmptyProcessContainer()
+	c.AddFactory(factory.NewBeaconsServiceFactory())
+	c.AddFactory(rpcbuild.NewDefaultRpcFactory())
+	return &c
 }

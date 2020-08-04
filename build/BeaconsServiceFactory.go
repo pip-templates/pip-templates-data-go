@@ -3,41 +3,33 @@ package build
 import (
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
 	cbuild "github.com/pip-services3-go/pip-services3-components-go/build"
-	blogic "github.com/pip-templates/pip-templates-microservice-go/logic"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
-	bservices "github.com/pip-templates/pip-templates-microservice-go/services/version1"
+	logic "github.com/pip-templates/pip-templates-microservice-go/logic"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	services1 "github.com/pip-templates/pip-templates-microservice-go/services/version1"
 )
 
 type BeaconsServiceFactory struct {
 	cbuild.Factory
-	MemoryPersistenceDescriptor    *cref.Descriptor
-	FilePersistenceDescriptor      *cref.Descriptor
-	MongoDbPersistenceDescriptor   *cref.Descriptor
-	CouchbasePersistenceDescriptor *cref.Descriptor
-	ControllerDescriptor           *cref.Descriptor
-	HttpServiceV1Descriptor        *cref.Descriptor
-	GrpcServiceV1Descriptor        *cref.Descriptor
 }
 
 func NewBeaconsServiceFactory() *BeaconsServiceFactory {
+	c := BeaconsServiceFactory{}
+	c.Factory = *cbuild.NewFactory()
 
-	bsf := BeaconsServiceFactory{}
-	bsf.Factory = *cbuild.NewFactory()
+	memoryPersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "memory", "*", "1.0")
+	filePersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "file", "*", "1.0")
+	mongoDbPersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "mongodb", "*", "1.0")
+	couchbasePersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "couchbase", "*", "1.0")
+	controllerDescriptor := cref.NewDescriptor("beacons", "controller", "default", "*", "1.0")
+	httpServiceV1Descriptor := cref.NewDescriptor("beacons", "service", "http", "*", "1.0")
+	grpcServiceV1Descriptor := cref.NewDescriptor("beacons", "service", "grpc", "*", "1.0")
 
-	bsf.MemoryPersistenceDescriptor = cref.NewDescriptor("beacons", "persistence", "memory", "*", "1.0")
-	bsf.FilePersistenceDescriptor = cref.NewDescriptor("beacons", "persistence", "file", "*", "1.0")
-	bsf.MongoDbPersistenceDescriptor = cref.NewDescriptor("beacons", "persistence", "mongodb", "*", "1.0")
-	bsf.CouchbasePersistenceDescriptor = cref.NewDescriptor("beacons", "persistence", "couchbase", "*", "1.0")
-	bsf.ControllerDescriptor = cref.NewDescriptor("beacons", "controller", "default", "*", "1.0")
-	bsf.HttpServiceV1Descriptor = cref.NewDescriptor("beacons", "service", "http", "*", "1.0")
-	bsf.GrpcServiceV1Descriptor = cref.NewDescriptor("beacons", "service", "grpc", "*", "1.0")
-
-	bsf.RegisterType(bsf.MemoryPersistenceDescriptor, bpersist.NewBeaconsMemoryPersistence)
-	bsf.RegisterType(bsf.FilePersistenceDescriptor, bpersist.NewBeaconsFilePersistence)
-	bsf.RegisterType(bsf.MongoDbPersistenceDescriptor, bpersist.NewBeaconsMongoDbPersistence)
-	bsf.RegisterType(bsf.CouchbasePersistenceDescriptor, bpersist.NewBeaconsCouchbasePersistence)
-	bsf.RegisterType(bsf.ControllerDescriptor, blogic.NewBeaconsController)
-	bsf.RegisterType(bsf.HttpServiceV1Descriptor, bservices.NewBeaconsHttpServiceV1)
-	bsf.RegisterType(bsf.GrpcServiceV1Descriptor, bservices.NewBeaconsGrpcServiceV1)
-	return &bsf
+	c.RegisterType(memoryPersistenceDescriptor, persist.NewBeaconsMemoryPersistence)
+	c.RegisterType(filePersistenceDescriptor, persist.NewBeaconsFilePersistence)
+	c.RegisterType(mongoDbPersistenceDescriptor, persist.NewBeaconsMongoDbPersistence)
+	c.RegisterType(couchbasePersistenceDescriptor, persist.NewBeaconsCouchbasePersistence)
+	c.RegisterType(controllerDescriptor, logic.NewBeaconsController)
+	c.RegisterType(httpServiceV1Descriptor, services1.NewBeaconsHttpServiceV1)
+	c.RegisterType(grpcServiceV1Descriptor, services1.NewBeaconsGrpcServiceV1)
+	return &c
 }

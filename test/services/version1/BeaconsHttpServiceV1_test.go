@@ -9,46 +9,45 @@ import (
 
 	cconf "github.com/pip-services3-go/pip-services3-commons-go/config"
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"
-	bdata "github.com/pip-templates/pip-templates-microservice-go/data/version1"
-	blogic "github.com/pip-templates/pip-templates-microservice-go/logic"
-	bpersist "github.com/pip-templates/pip-templates-microservice-go/persistence"
-	bservices "github.com/pip-templates/pip-templates-microservice-go/services/version1"
+	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
+	logic "github.com/pip-templates/pip-templates-microservice-go/logic"
+	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
+	services1 "github.com/pip-templates/pip-templates-microservice-go/services/version1"
 	"github.com/stretchr/testify/assert"
 )
 
-var Beacon1 bdata.BeaconV1 = bdata.BeaconV1{
+var Beacon1 data1.BeaconV1 = data1.BeaconV1{
 	Id:      "1",
 	Udi:     "00001",
-	Type:    bdata.BeaconTypeV1.AltBeacon,
+	Type:    data1.AltBeacon,
 	Site_id: "1",
 	Label:   "TestBeacon1",
-	Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
+	Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
 	Radius:  50,
 }
 
-var Beacon2 bdata.BeaconV1 = bdata.BeaconV1{
+var Beacon2 data1.BeaconV1 = data1.BeaconV1{
 	Id:      "2",
 	Udi:     "00002",
-	Type:    bdata.BeaconTypeV1.IBeacon,
+	Type:    data1.IBeacon,
 	Site_id: "1",
 	Label:   "TestBeacon2",
-	Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
+	Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
 	Radius:  70,
 }
 
 func TestBeaconsHttpServiceV1(t *testing.T) {
-
-	var persistence *bpersist.BeaconsMemoryPersistence
-	var controller *blogic.BeaconsController
-	var service *bservices.BeaconsHttpServiceV1
+	var persistence *persist.BeaconsMemoryPersistence
+	var controller *logic.BeaconsController
+	var service *services1.BeaconsHttpServiceV1
 	var url string = "http://localhost:3000"
 
-	persistence = bpersist.NewBeaconsMemoryPersistence()
+	persistence = persist.NewBeaconsMemoryPersistence()
 	persistence.Configure(cconf.NewEmptyConfigParams())
 
-	controller = blogic.NewBeaconsController()
+	controller = logic.NewBeaconsController()
 	controller.Configure(cconf.NewEmptyConfigParams())
-	service = bservices.NewBeaconsHttpServiceV1()
+	service = services1.NewBeaconsHttpServiceV1()
 	service.Configure(cconf.NewConfigParamsFromTuples(
 		"connection.protocol", "http",
 		"connection.port", "3000",
@@ -72,7 +71,7 @@ func TestBeaconsHttpServiceV1(t *testing.T) {
 	defer service.Close("")
 	defer persistence.Close("")
 
-	var beacon1 bdata.BeaconV1
+	var beacon1 data1.BeaconV1
 	// Create the first beacon
 	bodyMap := make(map[string]interface{})
 	bodyMap["beacon"] = Beacon1
@@ -82,7 +81,7 @@ func TestBeaconsHttpServiceV1(t *testing.T) {
 	assert.Nil(t, postErr)
 	resBody, bodyErr := ioutil.ReadAll(postResponse.Body)
 	assert.Nil(t, bodyErr)
-	var beacon bdata.BeaconV1
+	var beacon data1.BeaconV1
 	jsonErr := json.Unmarshal(resBody, &beacon)
 	assert.Nil(t, jsonErr)
 	assert.NotNil(t, beacon)
@@ -116,7 +115,7 @@ func TestBeaconsHttpServiceV1(t *testing.T) {
 	assert.Nil(t, postErr)
 	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
 	assert.Nil(t, bodyErr)
-	var page bdata.BeaconV1DataPage
+	var page data1.BeaconV1DataPage
 	jsonErr = json.Unmarshal(resBody, &page)
 	assert.Nil(t, jsonErr)
 	assert.NotNil(t, page)
@@ -169,7 +168,7 @@ func TestBeaconsHttpServiceV1(t *testing.T) {
 	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
 	assert.Nil(t, bodyErr)
 
-	var position bdata.GeoPointV1
+	var position data1.GeoPointV1
 	jsonErr = json.Unmarshal(resBody, &position)
 	assert.Nil(t, jsonErr)
 	assert.NotNil(t, beacon)
@@ -206,7 +205,7 @@ func TestBeaconsHttpServiceV1(t *testing.T) {
 	resBody, bodyErr = ioutil.ReadAll(postResponse.Body)
 	assert.Nil(t, bodyErr)
 
-	beacon = bdata.BeaconV1{}
+	beacon = data1.BeaconV1{}
 
 	jsonErr = json.Unmarshal(resBody, &beacon)
 	assert.Nil(t, jsonErr)
