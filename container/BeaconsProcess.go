@@ -12,7 +12,7 @@ type BeaconsProcess struct {
 
 func NewBeaconsProcess() *BeaconsProcess {
 	c := BeaconsProcess{}
-	c.ProcessContainer = *cproc.NewEmptyProcessContainer()
+	c.ProcessContainer = *cproc.NewProcessContainer("beacons", "Beacons microservice")
 	c.AddFactory(factory.NewBeaconsServiceFactory())
 	c.AddFactory(rpcbuild.NewDefaultRpcFactory())
 	return &c
