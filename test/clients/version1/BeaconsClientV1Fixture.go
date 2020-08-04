@@ -42,7 +42,7 @@ func NewBeaconsClientV1Fixture(client clients1.IBeaconsClientV1) *BeaconsClientV
 
 func (c *BeaconsClientV1Fixture) testCreateBeacons(t *testing.T) {
 	// Create the first beacon
-	beacon, err := c.client.CreateBeacon("", c.Beacon1)
+	beacon, err := c.client.CreateBeacon("", &c.Beacon1)
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, c.Beacon1.Udi, beacon.Udi)
@@ -52,7 +52,7 @@ func (c *BeaconsClientV1Fixture) testCreateBeacons(t *testing.T) {
 	assert.NotNil(t, beacon.Center)
 
 	// Create the second beacon
-	beacon, err = c.client.CreateBeacon("", c.Beacon2)
+	beacon, err = c.client.CreateBeacon("", &c.Beacon2)
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, c.Beacon2.Udi, beacon.Udi)
@@ -77,7 +77,7 @@ func (c *BeaconsClientV1Fixture) TestCrudOperations(t *testing.T) {
 
 	// Update the beacon
 	beacon1.Label = "ABC"
-	beacon, err := c.client.UpdateBeacon("", beacon1)
+	beacon, err := c.client.UpdateBeacon("", &beacon1)
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, beacon1.Id, beacon.Id)

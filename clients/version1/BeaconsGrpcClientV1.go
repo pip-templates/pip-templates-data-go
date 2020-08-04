@@ -69,12 +69,12 @@ func (c *BeaconsGrpcClientV1) CalculatePosition(correlationId string, siteId str
 	return position, nil
 }
 
-func (c *BeaconsGrpcClientV1) CreateBeacon(correlationId string, beacon data1.BeaconV1) (res *data1.BeaconV1, err error) {
-	params := cdata.NewStringValueMapFromTuples(
-		"beacon", beacon,
+func (c *BeaconsGrpcClientV1) CreateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error) {
+	params := cdata.NewAnyValueMapFromTuples(
+		"beacon", *beacon,
 	)
 
-	calValue, calErr := c.CallCommand(beaconV1Type, "create_beacon", correlationId, params)
+	calValue, calErr := c.CallCommand(beaconV1Type, "create_beacon", correlationId, params.Value())
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -82,12 +82,12 @@ func (c *BeaconsGrpcClientV1) CreateBeacon(correlationId string, beacon data1.Be
 	return res, nil
 }
 
-func (c *BeaconsGrpcClientV1) UpdateBeacon(correlationId string, beacon data1.BeaconV1) (res *data1.BeaconV1, err error) {
-	params := cdata.NewStringValueMapFromTuples(
-		"beacon", beacon,
+func (c *BeaconsGrpcClientV1) UpdateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error) {
+	params := cdata.NewAnyValueMapFromTuples(
+		"beacon", *beacon,
 	)
 
-	calValue, calErr := c.CallCommand(beaconV1Type, "update_beacon", correlationId, params)
+	calValue, calErr := c.CallCommand(beaconV1Type, "update_beacon", correlationId, params.Value())
 	if calErr != nil {
 		return nil, calErr
 	}

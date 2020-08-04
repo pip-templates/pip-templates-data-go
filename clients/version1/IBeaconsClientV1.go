@@ -14,9 +14,9 @@ type IBeaconsClientV1 interface {
 
 	CalculatePosition(correlationId string, siteId string, udis []string) (position *data1.GeoPointV1, err error)
 
-	CreateBeacon(correlationId string, beacon data1.BeaconV1) (res *data1.BeaconV1, err error)
+	CreateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error)
 
-	UpdateBeacon(correlationId string, beacon data1.BeaconV1) (res *data1.BeaconV1, err error)
+	UpdateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error)
 
 	DeleteBeaconById(correlationId string, beaconId string) (beacon *data1.BeaconV1, err error)
 }

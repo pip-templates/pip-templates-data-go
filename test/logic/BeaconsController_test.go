@@ -63,7 +63,7 @@ func CrudOperations(t *testing.T) {
 	var beacon1 data1.BeaconV1
 
 	// Create the first beacon
-	beacon, err := controller.CreateBeacon("", Beacon1)
+	beacon, err := controller.CreateBeacon("", &Beacon1)
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, Beacon1.Udi, beacon.Udi)
@@ -73,7 +73,7 @@ func CrudOperations(t *testing.T) {
 	assert.NotNil(t, beacon.Center)
 
 	// Create the second beacon
-	beacon, err = controller.CreateBeacon("", Beacon2)
+	beacon, err = controller.CreateBeacon("", &Beacon2)
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, Beacon2.Udi, beacon.Udi)
@@ -91,7 +91,7 @@ func CrudOperations(t *testing.T) {
 
 	// Update the beacon
 	beacon1.Label = "ABC"
-	beacon, err = controller.UpdateBeacon("", beacon1)
+	beacon, err = controller.UpdateBeacon("", &beacon1)
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, beacon1.Id, beacon.Id)
@@ -117,7 +117,7 @@ func CrudOperations(t *testing.T) {
 
 func CalculatePositions(t *testing.T) {
 	// Create the first beacon
-	beacon, err := controller.CreateBeacon("", Beacon1)
+	beacon, err := controller.CreateBeacon("", &Beacon1)
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, Beacon1.Udi, beacon.Udi)
@@ -127,7 +127,7 @@ func CalculatePositions(t *testing.T) {
 	assert.NotNil(t, beacon.Center)
 
 	// Create the second beacon
-	beacon, err = controller.CreateBeacon("", Beacon2)
+	beacon, err = controller.CreateBeacon("", &Beacon2)
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, Beacon2.Udi, beacon.Udi)

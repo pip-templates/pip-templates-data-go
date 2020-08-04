@@ -61,7 +61,7 @@ func (c *BeaconsMongoDbPersistence) composeFilter(filter *cdata.FilterParams) in
 	return bson.M{}
 }
 
-func (c *BeaconsMongoDbPersistence) Create(correlationId string, item data1.BeaconV1) (*data1.BeaconV1, error) {
+func (c *BeaconsMongoDbPersistence) Create(correlationId string, item *data1.BeaconV1) (*data1.BeaconV1, error) {
 	value, err := c.IdentifiableMongoDbPersistence.Create(correlationId, item)
 
 	if value == nil || err != nil {
@@ -103,7 +103,7 @@ func (c *BeaconsMongoDbPersistence) GetOneById(correlationId string, id string) 
 	return item, nil
 }
 
-func (c *BeaconsMongoDbPersistence) Update(correlationId string, item data1.BeaconV1) (*data1.BeaconV1, error) {
+func (c *BeaconsMongoDbPersistence) Update(correlationId string, item *data1.BeaconV1) (*data1.BeaconV1, error) {
 	value, err := c.IdentifiableMongoDbPersistence.Update(correlationId, item)
 
 	if value == nil || err != nil {

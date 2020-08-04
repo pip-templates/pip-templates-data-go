@@ -61,7 +61,7 @@ func (c *BeaconsMemoryPersistence) composeFilter(filter *cdata.FilterParams) fun
 	}
 }
 
-func (c *BeaconsMemoryPersistence) Create(correlationId string, item data1.BeaconV1) (*data1.BeaconV1, error) {
+func (c *BeaconsMemoryPersistence) Create(correlationId string, item *data1.BeaconV1) (*data1.BeaconV1, error) {
 	value, err := c.IdentifiableMemoryPersistence.Create(correlationId, item)
 
 	if value == nil || err != nil {
@@ -103,7 +103,7 @@ func (c *BeaconsMemoryPersistence) GetOneById(correlationId string, id string) (
 	return item, err
 }
 
-func (c *BeaconsMemoryPersistence) Update(correlationId string, item data1.BeaconV1) (*data1.BeaconV1, error) {
+func (c *BeaconsMemoryPersistence) Update(correlationId string, item *data1.BeaconV1) (*data1.BeaconV1, error) {
 	value, err := c.IdentifiableMemoryPersistence.Update(correlationId, item)
 
 	if value == nil || err != nil {

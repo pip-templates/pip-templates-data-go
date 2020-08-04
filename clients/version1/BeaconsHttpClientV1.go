@@ -77,7 +77,7 @@ func (c *BeaconsHttpClientV1) CalculatePosition(correlationId string, siteId str
 	return position, nil
 }
 
-func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon data1.BeaconV1) (res *data1.BeaconV1, err error) {
+func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error) {
 	params := cdata.NewStringValueMapFromTuples(
 		"beacon", beacon,
 	)
@@ -90,7 +90,7 @@ func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon data1.Be
 	return res, nil
 }
 
-func (c *BeaconsHttpClientV1) UpdateBeacon(correlationId string, beacon data1.BeaconV1) (res *data1.BeaconV1, err error) {
+func (c *BeaconsHttpClientV1) UpdateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error) {
 	params := cdata.NewStringValueMapFromTuples(
 		"beacon", beacon,
 	)

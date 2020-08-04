@@ -57,14 +57,14 @@ func (c *BeaconsDirectClientV1) CalculatePosition(correlationId string, siteId s
 	return res, err
 }
 
-func (c *BeaconsDirectClientV1) CreateBeacon(correlationId string, beacon data1.BeaconV1) (res *data1.BeaconV1, err error) {
+func (c *BeaconsDirectClientV1) CreateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error) {
 	timing := c.Instrument(correlationId, "beacons.create_beacon")
 	res, err = c.controller.CreateBeacon(correlationId, beacon)
 	timing.EndTiming()
 	return res, err
 }
 
-func (c *BeaconsDirectClientV1) UpdateBeacon(correlationId string, beacon data1.BeaconV1) (res *data1.BeaconV1, err error) {
+func (c *BeaconsDirectClientV1) UpdateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error) {
 	timing := c.Instrument(correlationId, "beacons.update_beacon")
 	res, err = c.controller.UpdateBeacon(correlationId, beacon)
 	timing.EndTiming()

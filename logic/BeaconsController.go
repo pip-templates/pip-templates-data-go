@@ -97,7 +97,7 @@ func (c *BeaconsController) CalculatePosition(correlationId string, siteId strin
 	return &pos, nil
 }
 
-func (c *BeaconsController) CreateBeacon(correlationId string, beacon data1.BeaconV1) (*data1.BeaconV1, error) {
+func (c *BeaconsController) CreateBeacon(correlationId string, beacon *data1.BeaconV1) (*data1.BeaconV1, error) {
 	if beacon.Id == "" {
 		beacon.Id = cdata.IdGenerator.NextLong()
 	}
@@ -109,7 +109,7 @@ func (c *BeaconsController) CreateBeacon(correlationId string, beacon data1.Beac
 	return c.persistence.Create(correlationId, beacon)
 }
 
-func (c *BeaconsController) UpdateBeacon(correlationId string, beacon data1.BeaconV1) (*data1.BeaconV1, error) {
+func (c *BeaconsController) UpdateBeacon(correlationId string, beacon *data1.BeaconV1) (*data1.BeaconV1, error) {
 	if beacon.Type == "" {
 		beacon.Type = data1.Unknown
 	}

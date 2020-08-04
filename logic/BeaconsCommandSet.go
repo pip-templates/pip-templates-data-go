@@ -87,11 +87,14 @@ func (c *BeaconsCommandSet) makeCreateBeaconCommand() ccomand.ICommand {
 		cvalid.NewObjectSchema().
 			WithRequiredProperty("beacon", data1.NewBeaconV1Schema()),
 		func(correlationId string, args *crun.Parameters) (result interface{}, err error) {
-			val, _ := json.Marshal(args.Get("beacon"))
-			var beacon data1.BeaconV1
-			json.Unmarshal(val, &beacon)
 
-			return c.controller.CreateBeacon(correlationId, beacon)
+			val, errJ := json.Marshal(args.Get("beacon"))
+			var beacon data1.BeaconV1 = data1.BeaconV1{}
+			errJ = json.Unmarshal(val, &beacon)
+			if errJ != nil {
+				return nil, errJ
+			}
+			return c.controller.CreateBeacon(correlationId, &beacon)
 		})
 }
 
@@ -104,7 +107,7 @@ func (c *BeaconsCommandSet) makeUpdateBeaconCommand() ccomand.ICommand {
 			val, _ := json.Marshal(args.Get("beacon"))
 			var beacon data1.BeaconV1
 			json.Unmarshal(val, &beacon)
-			return c.controller.UpdateBeacon(correlationId, beacon)
+			return c.controller.UpdateBeacon(correlationId, &beacon)
 		})
 }
 

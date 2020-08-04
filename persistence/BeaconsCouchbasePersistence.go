@@ -64,7 +64,7 @@ func (c *BeaconsCouchbasePersistence) composeFilter(filter *cdata.FilterParams) 
 	return ""
 }
 
-func (c *BeaconsCouchbasePersistence) Create(correlationId string, item data1.BeaconV1) (*data1.BeaconV1, error) {
+func (c *BeaconsCouchbasePersistence) Create(correlationId string, item *data1.BeaconV1) (*data1.BeaconV1, error) {
 	value, err := c.IdentifiableCouchbasePersistence.Create(correlationId, item)
 
 	if value == nil || err != nil {
@@ -106,7 +106,7 @@ func (c *BeaconsCouchbasePersistence) GetOneById(correlationId string, id string
 	return item, nil
 }
 
-func (c *BeaconsCouchbasePersistence) Update(correlationId string, item data1.BeaconV1) (*data1.BeaconV1, error) {
+func (c *BeaconsCouchbasePersistence) Update(correlationId string, item *data1.BeaconV1) (*data1.BeaconV1, error) {
 	value, err := c.IdentifiableCouchbasePersistence.Update(correlationId, item)
 
 	if value == nil || err != nil {
