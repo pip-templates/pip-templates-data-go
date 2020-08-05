@@ -164,7 +164,7 @@ func (c *BeaconsMongoDbPersistence) GetPageByFilter(correlationId string, filter
 
 func (c *BeaconsMongoDbPersistence) GetOneByUdi(correlationId string, udi string) (*data1.BeaconV1, error) {
 	filter := bson.M{"udi": udi}
-	p := c.GetProtoPtr()
+	p := c.NewObjectByPrototype()
 	r := c.Collection.FindOne(c.Connection.Ctx, filter)
 	err := r.Decode(p.Interface())
 	if err != nil {
@@ -173,7 +173,7 @@ func (c *BeaconsMongoDbPersistence) GetOneByUdi(correlationId string, udi string
 		}
 		return nil, err
 	}
-	item := c.GetConvResult(p, c.Prototype)
+	item := c.ConvertResultToPublic(p, c.Prototype)
 
 	if item == nil {
 		return nil, nil //??

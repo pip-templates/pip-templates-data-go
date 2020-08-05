@@ -64,12 +64,12 @@ func (c *BeaconsHttpClientV1) GetBeaconByUdi(correlationId string, udi string) (
 }
 
 func (c *BeaconsHttpClientV1) CalculatePosition(correlationId string, siteId string, udis []string) (position *data1.GeoPointV1, err error) {
-	params := cdata.NewStringValueMapFromTuples(
+	params := cdata.NewAnyValueMapFromTuples(
 		"site_id", siteId,
 		"udis", udis,
 	)
 
-	calValue, calErr := c.CallCommand(geoPointV1Type, "calculate_position", correlationId, nil, params)
+	calValue, calErr := c.CallCommand(geoPointV1Type, "calculate_position", correlationId, nil, params.Value())
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -78,11 +78,11 @@ func (c *BeaconsHttpClientV1) CalculatePosition(correlationId string, siteId str
 }
 
 func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error) {
-	params := cdata.NewStringValueMapFromTuples(
+	params := cdata.NewAnyValueMapFromTuples(
 		"beacon", beacon,
 	)
 
-	calValue, calErr := c.CallCommand(beaconV1Type, "create_beacon", correlationId, nil, params)
+	calValue, calErr := c.CallCommand(beaconV1Type, "create_beacon", correlationId, nil, params.Value())
 	if calErr != nil {
 		return nil, calErr
 	}
@@ -91,11 +91,11 @@ func (c *BeaconsHttpClientV1) CreateBeacon(correlationId string, beacon *data1.B
 }
 
 func (c *BeaconsHttpClientV1) UpdateBeacon(correlationId string, beacon *data1.BeaconV1) (res *data1.BeaconV1, err error) {
-	params := cdata.NewStringValueMapFromTuples(
+	params := cdata.NewAnyValueMapFromTuples(
 		"beacon", beacon,
 	)
 
-	calValue, calErr := c.CallCommand(beaconV1Type, "update_beacon", correlationId, nil, params)
+	calValue, calErr := c.CallCommand(beaconV1Type, "update_beacon", correlationId, nil, params.Value())
 	if calErr != nil {
 		return nil, calErr
 	}
