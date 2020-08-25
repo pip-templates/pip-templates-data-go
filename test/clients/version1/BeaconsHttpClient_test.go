@@ -8,13 +8,13 @@ import (
 	clients1 "github.com/pip-templates/pip-templates-microservice-go/clients/version1"
 	logic "github.com/pip-templates/pip-templates-microservice-go/logic"
 	persist "github.com/pip-templates/pip-templates-microservice-go/persistence"
-	bservices "github.com/pip-templates/pip-templates-microservice-go/services/version1"
+	serviceses1 "github.com/pip-templates/pip-templates-microservice-go/services/version1"
 )
 
 func TestBeaconsHttpClientV1(t *testing.T) {
 	var persistence *persist.BeaconsMemoryPersistence
 	var controller *logic.BeaconsController
-	var service *bservices.BeaconsHttpServiceV1
+	var service *serviceses1.BeaconsHttpServiceV1
 	var client *clients1.BeaconsHttpClientV1
 	var fixture *BeaconsClientV1Fixture
 
@@ -30,7 +30,7 @@ func TestBeaconsHttpClientV1(t *testing.T) {
 		"connection.host", "localhost",
 	)
 
-	service = bservices.NewBeaconsHttpServiceV1()
+	service = serviceses1.NewBeaconsHttpServiceV1()
 	service.Configure(httpConfig)
 
 	client = clients1.NewBeaconsHttpClientV1()
