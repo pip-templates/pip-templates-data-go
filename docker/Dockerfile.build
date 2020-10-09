@@ -1,17 +1,18 @@
 # Start with the golang v1.13 image
-FROM golang:1.13
+FROM golang:1.13-stretch
+
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
 
 # Set a working directory
-WORKDIR /app
-
+WORKDIR /go/src/app
 # Copy the package files
-COPY go.mod go.sum ./
-
-# Install all go_modules
-RUN go mod download
-
-# Copy the entire project
 COPY . .
+# Install all go_modules
+ RUN go get -d -v ./...
+ RUN go install -v ./...
 
 # Build the project
-RUN go build -o ./obj/app ./bin
+RUN go build -a -installsuffix cgo -o app ./bin

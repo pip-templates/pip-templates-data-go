@@ -9,8 +9,8 @@ $image="$($component.registry)/$($component.name):$($component.version)-build"
 $container=$component.name
 
 # Remove build files
-if (Test-Path "obj") {
-    Remove-Item -Recurse -Force -Path "obj"
+if (Test-Path "exe/app") {
+    Remove-Item -Recurse -Force -Path "exe/app"
 }
 
 # Build docker image
@@ -18,5 +18,6 @@ docker build -f docker/Dockerfile.build -t $image .
 
 # Create and copy compiled files, then destroy the container
 docker create --name $container $image
-docker cp "$($container):/app/obj" ./obj
+docker cp "$($container):/go/src/app/app" ./exe/app
 docker rm $container
+

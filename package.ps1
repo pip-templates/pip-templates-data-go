@@ -9,7 +9,7 @@ $image="$($component.registry)/$($component.name):$($component.version)-$($compo
 $latestImage="$($component.registry)/$($component.name):latest"
 
 # Build docker image
-docker build -f docker/Dockerfile -t $image -t $latestImage .
+docker build --no-cache -f docker/Dockerfile -t $image -t $latestImage .
 
 # Set environment variables
 $env:IMAGE = $image
