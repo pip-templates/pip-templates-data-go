@@ -11,6 +11,8 @@ $container=$component.name
 # Remove build files
 if (Test-Path "exe/app") {
     Remove-Item -Recurse -Force -Path "exe/app"
+}else {
+    New-Item -ItemType Directory -Force -Path "./exe"
 }
 
 # Build docker image
@@ -21,3 +23,7 @@ docker create --name $container $image
 docker cp "$($container):/go/src/app/app" ./exe/app
 docker rm $container
 
+if (!(Test-Path "./exe/app")) {
+    Write-Host "exe folder doesn't exist in root dir. Build failed. Watch logs above."
+    exit 1
+}
