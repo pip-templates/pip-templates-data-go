@@ -1,4 +1,4 @@
-package data
+package data1
 
 type GeoPointV1 struct {
 	Type        string      `json:"type" bson:"type"`

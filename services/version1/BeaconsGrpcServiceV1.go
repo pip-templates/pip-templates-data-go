@@ -1,4 +1,4 @@
-package services
+package services1
 
 import (
 	cref "github.com/pip-services3-go/pip-services3-commons-go/refer"

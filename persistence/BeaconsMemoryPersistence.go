@@ -45,7 +45,7 @@ func (c *BeaconsMemoryPersistence) composeFilter(filter *cdata.FilterParams) fun
 		if id != "" && item.Id != id {
 			return false
 		}
-		if siteId != "" && item.Site_id != siteId {
+		if siteId != "" && item.SiteId != siteId {
 			return false
 		}
 		if label != "" && item.Label != label {

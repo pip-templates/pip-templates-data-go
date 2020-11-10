@@ -1,4 +1,4 @@
-package data
+package data1
 
 type BeaconV1DataPage struct {
 	Total *int64      `json:"total" bson:"total"`

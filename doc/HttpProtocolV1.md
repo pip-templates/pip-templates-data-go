@@ -20,7 +20,7 @@ Represents a beacon
 
 **Properties:**
 - Id: string - a unique beacon id
-- Site_id: string - the unique id of the worksite where the beacon is being used
+- SiteId: string - the unique id of the worksite where the beacon is being used
 - Type: string - the beacon's type (iBeacon, EddyStoneUdi, etc.)
 - Udi: string - the UDI of the beacon
 - Label: string - the beacon's label

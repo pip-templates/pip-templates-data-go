@@ -16,7 +16,7 @@ var Beacon1 data1.BeaconV1 = data1.BeaconV1{
 	Id:      "1",
 	Udi:     "00001",
 	Type:    data1.AltBeacon,
-	Site_id: "1",
+	SiteId: "1",
 	Label:   "TestBeacon1",
 	Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
 	Radius:  50,
@@ -26,7 +26,7 @@ var Beacon2 data1.BeaconV1 = data1.BeaconV1{
 	Id:      "2",
 	Udi:     "00002",
 	Type:    data1.IBeacon,
-	Site_id: "1",
+	SiteId: "1",
 	Label:   "TestBeacon2",
 	Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
 	Radius:  70,
@@ -67,7 +67,7 @@ func CrudOperations(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, Beacon1.Udi, beacon.Udi)
-	assert.Equal(t, Beacon1.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon1.SiteId, beacon.SiteId)
 	assert.Equal(t, Beacon1.Type, beacon.Type)
 	assert.Equal(t, Beacon1.Label, beacon.Label)
 	assert.NotNil(t, beacon.Center)
@@ -77,7 +77,7 @@ func CrudOperations(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, Beacon2.Udi, beacon.Udi)
-	assert.Equal(t, Beacon2.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon2.SiteId, beacon.SiteId)
 	assert.Equal(t, Beacon2.Type, beacon.Type)
 	assert.Equal(t, Beacon2.Label, beacon.Label)
 	assert.NotNil(t, beacon.Center)
@@ -121,7 +121,7 @@ func CalculatePositions(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, Beacon1.Udi, beacon.Udi)
-	assert.Equal(t, Beacon1.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon1.SiteId, beacon.SiteId)
 	assert.Equal(t, Beacon1.Type, beacon.Type)
 	assert.Equal(t, Beacon1.Label, beacon.Label)
 	assert.NotNil(t, beacon.Center)
@@ -131,7 +131,7 @@ func CalculatePositions(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, Beacon2.Udi, beacon.Udi)
-	assert.Equal(t, Beacon2.Site_id, beacon.Site_id)
+	assert.Equal(t, Beacon2.SiteId, beacon.SiteId)
 	assert.Equal(t, Beacon2.Type, beacon.Type)
 	assert.Equal(t, Beacon2.Label, beacon.Label)
 	assert.NotNil(t, beacon.Center)

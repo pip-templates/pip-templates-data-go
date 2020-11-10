@@ -27,7 +27,7 @@ The logical contract of the microservice is presented below.
 //implements IStringIdentifiable
 type BeaconV1 struct {
 	Id      string     `json:"id" bson:"_id"`
-	Site_id string     `json:"site_id" bson:"site_id"`
+	SiteId string     `json:"site_id" bson:"site_id"`
 	Type    string     `json:"type" bson:"type"`
 	Udi     string     `json:"udi" bson:"udi"`
 	Label   string     `json:"label" bson:"label"`
@@ -213,7 +213,7 @@ beacon := bdata.BeaconV1{
     Id:      "1",
     Udi:     "00001",
     Type:    bdata.BeaconTypeV1.AltBeacon,
-    Site_id: "1",
+    SiteId: "1",
     Label:   "TestBeacon",
     Center:  bdata.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
     Radius:  50,

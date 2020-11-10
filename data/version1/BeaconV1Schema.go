@@ -1,4 +1,4 @@
-package data
+package data1
 
 import (
 	cconv "github.com/pip-services3-go/pip-services3-commons-go/convert"

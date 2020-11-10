@@ -1,4 +1,4 @@
-package data
+package data1
 
 const Unknown = "unknown"
 const AltBeacon = "altbeacon"

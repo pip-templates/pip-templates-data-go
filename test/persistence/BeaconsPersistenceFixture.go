@@ -19,31 +19,31 @@ type BeaconsPersistenceFixture struct {
 func NewBeaconsPersistenceFixture(persistence persist.IBeaconsPersistence) *BeaconsPersistenceFixture {
 	c := BeaconsPersistenceFixture{}
 	c.Beacon1 = data1.BeaconV1{
-		Id:      "1",
-		Udi:     "00001",
-		Type:    data1.AltBeacon,
-		Site_id: "1",
-		Label:   "TestBeacon1",
-		Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
-		Radius:  50,
+		Id:     "1",
+		Udi:    "00001",
+		Type:   data1.AltBeacon,
+		SiteId: "1",
+		Label:  "TestBeacon1",
+		Center: data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
+		Radius: 50,
 	}
 	c.Beacon2 = data1.BeaconV1{
-		Id:      "2",
-		Udi:     "00002",
-		Type:    data1.IBeacon,
-		Site_id: "1",
-		Label:   "TestBeacon2",
-		Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
-		Radius:  70,
+		Id:     "2",
+		Udi:    "00002",
+		Type:   data1.IBeacon,
+		SiteId: "1",
+		Label:  "TestBeacon2",
+		Center: data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
+		Radius: 70,
 	}
 	c.Beacon3 = data1.BeaconV1{
-		Id:      "3",
-		Udi:     "00003",
-		Type:    data1.AltBeacon,
-		Site_id: "2",
-		Label:   "TestBeacon3",
-		Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{10.0, 10.0}}},
-		Radius:  50,
+		Id:     "3",
+		Udi:    "00003",
+		Type:   data1.AltBeacon,
+		SiteId: "2",
+		Label:  "TestBeacon3",
+		Center: data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{10.0, 10.0}}},
+		Radius: 50,
 	}
 	c.persistence = persistence
 	return &c
@@ -55,7 +55,7 @@ func (c *BeaconsPersistenceFixture) testCreateBeacons(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, c.Beacon1.Udi, beacon.Udi)
-	assert.Equal(t, c.Beacon1.Site_id, beacon.Site_id)
+	assert.Equal(t, c.Beacon1.SiteId, beacon.SiteId)
 	assert.Equal(t, c.Beacon1.Type, beacon.Type)
 	assert.Equal(t, c.Beacon1.Label, beacon.Label)
 	assert.NotNil(t, beacon.Center)
@@ -65,7 +65,7 @@ func (c *BeaconsPersistenceFixture) testCreateBeacons(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, c.Beacon2.Udi, beacon.Udi)
-	assert.Equal(t, c.Beacon2.Site_id, beacon.Site_id)
+	assert.Equal(t, c.Beacon2.SiteId, beacon.SiteId)
 	assert.Equal(t, c.Beacon2.Type, beacon.Type)
 	assert.Equal(t, c.Beacon2.Label, beacon.Label)
 	assert.NotNil(t, beacon.Center)
@@ -75,7 +75,7 @@ func (c *BeaconsPersistenceFixture) testCreateBeacons(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, beacon)
 	assert.Equal(t, c.Beacon3.Udi, beacon.Udi)
-	assert.Equal(t, c.Beacon3.Site_id, beacon.Site_id)
+	assert.Equal(t, c.Beacon3.SiteId, beacon.SiteId)
 	assert.Equal(t, c.Beacon3.Type, beacon.Type)
 	assert.Equal(t, c.Beacon3.Label, beacon.Label)
 	assert.NotNil(t, beacon.Center)
