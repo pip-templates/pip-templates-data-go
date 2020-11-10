@@ -20,6 +20,8 @@ func NewBeaconsServiceFactory() *BeaconsServiceFactory {
 	filePersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "file", "*", "1.0")
 	mongoDbPersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "mongodb", "*", "1.0")
 	couchbasePersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "couchbase", "*", "1.0")
+	postgresDbPersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "postgres", "*", "1.0")
+	jsonPostgresDbPersistenceDescriptor := cref.NewDescriptor("beacons", "persistence", "json-postgres", "*", "1.0")
 	controllerDescriptor := cref.NewDescriptor("beacons", "controller", "default", "*", "1.0")
 	httpServiceV1Descriptor := cref.NewDescriptor("beacons", "service", "http", "*", "1.0")
 	grpcServiceV1Descriptor := cref.NewDescriptor("beacons", "service", "grpc", "*", "1.0")
@@ -28,6 +30,9 @@ func NewBeaconsServiceFactory() *BeaconsServiceFactory {
 	c.RegisterType(filePersistenceDescriptor, persist.NewBeaconsFilePersistence)
 	c.RegisterType(mongoDbPersistenceDescriptor, persist.NewBeaconsMongoDbPersistence)
 	c.RegisterType(couchbasePersistenceDescriptor, persist.NewBeaconsCouchbasePersistence)
+	c.RegisterType(postgresDbPersistenceDescriptor, persist.NewBeaconsPostgresPersistence)
+	c.RegisterType(jsonPostgresDbPersistenceDescriptor, persist.NewBeaconsJsonPostgresPersistence)
+
 	c.RegisterType(controllerDescriptor, logic.NewBeaconsController)
 	c.RegisterType(httpServiceV1Descriptor, services1.NewBeaconsHttpServiceV1)
 	c.RegisterType(grpcServiceV1Descriptor, services1.NewBeaconsGrpcServiceV1)
