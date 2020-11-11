@@ -6,19 +6,19 @@ import (
 	"strings"
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
-	persist "github.com/pip-services3-go/pip-services3-couchbase-go/persistence"
+	cpersist "github.com/pip-services3-go/pip-services3-couchbase-go/persistence"
 	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 	"gopkg.in/couchbase/gocb.v1"
 )
 
 type BeaconsCouchbasePersistence struct {
-	persist.IdentifiableCouchbasePersistence
+	cpersist.IdentifiableCouchbasePersistence
 }
 
 func NewBeaconsCouchbasePersistence() *BeaconsCouchbasePersistence {
 	proto := reflect.TypeOf(&data1.BeaconV1{})
 	c := BeaconsCouchbasePersistence{}
-	c.IdentifiableCouchbasePersistence = *persist.NewIdentifiableCouchbasePersistence(proto, "beaconBucket", "beacons")
+	c.IdentifiableCouchbasePersistence = *cpersist.NewIdentifiableCouchbasePersistence(proto, "beaconBucket", "beacons")
 	return &c
 }
 

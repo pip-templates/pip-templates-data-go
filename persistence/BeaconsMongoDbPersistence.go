@@ -5,20 +5,20 @@ import (
 	"strings"
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
-	persist "github.com/pip-services3-go/pip-services3-mongodb-go/persistence"
+	cpersist "github.com/pip-services3-go/pip-services3-mongodb-go/persistence"
 	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type BeaconsMongoDbPersistence struct {
-	persist.IdentifiableMongoDbPersistence
+	cpersist.IdentifiableMongoDbPersistence
 }
 
 func NewBeaconsMongoDbPersistence() *BeaconsMongoDbPersistence {
 	proto := reflect.TypeOf(&data1.BeaconV1{})
 	c := BeaconsMongoDbPersistence{}
-	c.IdentifiableMongoDbPersistence = *persist.NewIdentifiableMongoDbPersistence(proto, "beacons")
+	c.IdentifiableMongoDbPersistence = *cpersist.NewIdentifiableMongoDbPersistence(proto, "beacons")
 	return &c
 }
 

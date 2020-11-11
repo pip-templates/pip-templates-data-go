@@ -6,18 +6,18 @@ import (
 	"strings"
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
-	ppersist "github.com/pip-services3-go/pip-services3-postgres-go/persistence"
+	cpersist "github.com/pip-services3-go/pip-services3-postgres-go/persistence"
 	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 )
 
 type BeaconsPostgresPersistence struct {
-	ppersist.IdentifiablePostgresPersistence
+	cpersist.IdentifiablePostgresPersistence
 }
 
 func NewBeaconsPostgresPersistence() *BeaconsPostgresPersistence {
 	proto := reflect.TypeOf(&data1.BeaconV1{})
 	c := &BeaconsPostgresPersistence{
-		IdentifiablePostgresPersistence: *ppersist.NewIdentifiablePostgresPersistence(proto, "beacons"),
+		IdentifiablePostgresPersistence: *cpersist.NewIdentifiablePostgresPersistence(proto, "beacons"),
 	}
 	// Row name must be in double quotes for properly case!!!
 	c.AutoCreateObject("CREATE TABLE beacons (\"id\" TEXT PRIMARY KEY, \"site_id\" TEXT, \"type\" TEXT, \"udi\" TEXT, \"label\" TEXT, \"center\" JSONB, \"radius\" REAL)")

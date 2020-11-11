@@ -6,18 +6,18 @@ import (
 	"strings"
 
 	cdata "github.com/pip-services3-go/pip-services3-commons-go/data"
-	ppersist "github.com/pip-services3-go/pip-services3-postgres-go/persistence"
+	cpersist "github.com/pip-services3-go/pip-services3-postgres-go/persistence"
 	data1 "github.com/pip-templates/pip-templates-microservice-go/data/version1"
 )
 
 type BeaconsJsonPostgresPersistence struct {
-	ppersist.IdentifiableJsonPostgresPersistence
+	cpersist.IdentifiableJsonPostgresPersistence
 }
 
 func NewBeaconsJsonPostgresPersistence() *BeaconsJsonPostgresPersistence {
 	proto := reflect.TypeOf(&data1.BeaconV1{})
 	c := &BeaconsJsonPostgresPersistence{
-		IdentifiableJsonPostgresPersistence: *ppersist.NewIdentifiableJsonPostgresPersistence(proto, "beacons_json"),
+		IdentifiableJsonPostgresPersistence: *cpersist.NewIdentifiableJsonPostgresPersistence(proto, "beacons_json"),
 	}
 
 	c.EnsureTable("", "")
