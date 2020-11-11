@@ -24,7 +24,7 @@ func TestBeaconsMongoDbPersistence(t *testing.T) {
 		mongoPort = "27017"
 	}
 
-	mongoDatabase := os.Getenv("MONGO_SERVICE_DB")
+	mongoDatabase := os.Getenv("MONGO_DB")
 	if mongoDatabase == "" {
 		mongoDatabase = "test"
 	}

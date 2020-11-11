@@ -13,13 +13,13 @@ func TestBeaconsJsonPostgresPersistence(t *testing.T) {
 	var persistence *persist.BeaconsJsonPostgresPersistence
 	var fixture BeaconsPersistenceFixture
 
-	postgresUri := os.Getenv("POSTGRES_URI")
-	postgresHost := os.Getenv("POSTGRES_HOST")
+	postgresUri := os.Getenv("POSTGRES_SERVICE_URI")
+	postgresHost := os.Getenv("POSTGRES_SERVICE_HOST")
 	if postgresHost == "" {
 		postgresHost = "localhost"
 	}
 
-	postgresPort := os.Getenv("POSTGRES_PORT")
+	postgresPort := os.Getenv("POSTGRES_SERVICE_PORT")
 	if postgresPort == "" {
 		postgresPort = "5432"
 	}
@@ -33,7 +33,7 @@ func TestBeaconsJsonPostgresPersistence(t *testing.T) {
 	if postgresUser == "" {
 		postgresUser = "postgres"
 	}
-	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
+	postgresPassword := os.Getenv("POSTGRES_PASS")
 	if postgresPassword == "" {
 		postgresPassword = "postgres"
 	}
