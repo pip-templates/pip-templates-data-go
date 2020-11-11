@@ -17,23 +17,23 @@ import (
 )
 
 var Beacon1 data1.BeaconV1 = data1.BeaconV1{
-	Id:      "1",
-	Udi:     "00001",
-	Type:    data1.AltBeacon,
+	Id:     "1",
+	Udi:    "00001",
+	Type:   data1.AltBeacon,
 	SiteId: "1",
-	Label:   "TestBeacon1",
-	Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
-	Radius:  50,
+	Label:  "TestBeacon1",
+	Center: data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{0.0, 0.0}}},
+	Radius: 50,
 }
 
 var Beacon2 data1.BeaconV1 = data1.BeaconV1{
-	Id:      "2",
-	Udi:     "00002",
-	Type:    data1.IBeacon,
+	Id:     "2",
+	Udi:    "00002",
+	Type:   data1.IBeacon,
 	SiteId: "1",
-	Label:   "TestBeacon2",
-	Center:  data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
-	Radius:  70,
+	Label:  "TestBeacon2",
+	Center: data1.GeoPointV1{Type: "Point", Coordinates: [][]float32{{2.0, 2.0}}},
+	Radius: 70,
 }
 
 func TestBeaconsHttpServiceV1(t *testing.T) {

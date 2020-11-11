@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/gorilla/mux v1.7.4
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pip-services3-go/pip-services3-commons-go v1.0.2
 	github.com/pip-services3-go/pip-services3-components-go v1.0.2
